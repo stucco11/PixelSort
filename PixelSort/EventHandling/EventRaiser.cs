@@ -1,4 +1,6 @@
-﻿public static class EventRaiser
+﻿using System;
+
+public static class EventRaiser
 {
     public static void Raise(this EventHandler handler, object sender)
     {

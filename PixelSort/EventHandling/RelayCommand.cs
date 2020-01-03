@@ -1,3 +1,6 @@
+using System;
+using System.Windows.Input;
+
 public class RelayCommand<T> : ICommand
 {
     private readonly Predicate<T> _canExecute;
