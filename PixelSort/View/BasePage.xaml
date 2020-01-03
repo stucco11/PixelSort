@@ -5,9 +5,96 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:PixelSort.View"
              mc:Ignorable="d" 
-             d:DesignHeight="450" 
-             d:DesignWidth="800">
-    <Grid>
+             d:DesignHeight="900" 
+             d:DesignWidth="1600"
+             Background="#282829">
+    <DockPanel>
+        <StackPanel
+            Margin="20"
+            DockPanel.Dock="Left"
+            Orientation="Vertical"
+            HorizontalAlignment="Center"
+            Visibility="{Binding VerticalPanelVisibility}">
+
+            <Image Source="{Binding ImagePath}"
+                       Height="350"
+                       Width="1100"/>
+            <Button Name="LoadImageV"
+                        Margin="10px"
+                        Content="Load Image"
+                        Command="{Binding LoadImageClick}"
+                        Width="80px"/>
+            <Button x:Name="OrientationV"
+                        Command="{Binding SwitchOrientation}"
+                        Width="80px"
+                        Margin="10px"
+                        Content="Switch"/>
+
+            <Image Source="{Binding ImagePath}"
+                       Height="350"
+                       Width="1100"/>
+
+            <Button Name="SaveImageV"
+                        Margin='10px'
+                        Content="Save Image"
+                        Command="{Binding SaveImage}"
+                        Width="80px"/>
+        </StackPanel>
+        <StackPanel
+            Margin="20"
+            DockPanel.Dock="Left"
+            Orientation="Horizontal"
+            HorizontalAlignment="Center"
+            Visibility="{Binding HorizontalPanelVisibility}">
+
+            <StackPanel Orientation="Vertical">
+            <Image Source="{Binding ImagePath}"
+                       Height="700"
+                       Width="500"/>
+            <Button Name="LoadImageH"
+                        Margin="10px"
+                        Content="Load Image"
+                        Command="{Binding LoadImageClick}"
+                        Width="80px"/>
+            </StackPanel>
+            <Button x:Name="OrientationH"
+                        Command="{Binding SwitchOrientation}"
+                        Width="80px"
+                        Height="20px"
+                        Margin="10px"
+                        Content="Switch"/>
+
+            <StackPanel Orientation="Vertical">
+            <Image Source="{Binding ImagePath}"
+                       Height="700"
+                       Width="500"/>
+
+            <Button Name="SaveImageH"
+                        Margin='10px'
+                        Content="Save Image"
+                        Command="{Binding SaveImage}"
+                        Width="80px"/>
+            </StackPanel>
+        </StackPanel>
+        <StackPanel
+            Background="#353638"
+                    Orientation="Vertical"
+                    DockPanel.Dock="Right">
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Center"
+                        Margin="20">
+                
+                <TextBlock Text="PixelSort Settings"
+                           Foreground="White"
+                           FontSize="16"
+                           HorizontalAlignment="Center"/>
+            </StackPanel>
+
+            <Button x:Name="Process"
+                        Content="Begin Processing"
+                    Width="120"
+                    VerticalAlignment="Bottom"/>
             
-    </Grid>
+        </StackPanel>
+    </DockPanel>
 </UserControl>

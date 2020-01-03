@@ -5,9 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PixelSort"
         mc:Ignorable="d"
-        Title="PixelSort" 
-        Height="450" 
-        Width="800">
+        Title="PixelSort"
+        Icon="Icon.ico"
+        Height="900" 
+        Width="1600"
+        MinHeight="900" MinWidth="1600">
     <Grid>
       <ContentControl Content="{Binding CurrentPageViewModel}" />
     </Grid>
