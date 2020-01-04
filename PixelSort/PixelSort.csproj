@@ -58,7 +58,8 @@
     </ApplicationDefinition>
     <Compile Include="EventHandling\Mediator.cs" />
     <Compile Include="EventHandling\RelayCommand.cs" />
-    <Compile Include="Model\DefaultSort.cs" />
+    <Compile Include="Model\ImageToColor.cs" />
+    <Compile Include="Model\SimpleSort.cs" />
     <Compile Include="ViewModel\BasePageViewModel.cs" />
     <Compile Include="ViewModel\BaseViewModel.cs" />
     <Compile Include="ViewModel\MainWindowViewModel.cs" />

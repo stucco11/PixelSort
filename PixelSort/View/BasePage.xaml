@@ -30,7 +30,7 @@
                         Margin="10px"
                         Content="Switch"/>
 
-            <Image Source="{Binding SortedImage}"
+            <Image Source="{Binding SortedImage, Mode=TwoWay}"
                        Height="350"
                        Width="1100"/>
 

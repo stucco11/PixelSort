@@ -1,7 +1,10 @@
 ﻿using Microsoft.Win32;
 using PixelSort.EventHandling;
+using PixelSort.Model;
 using System;
 using System.ComponentModel;
+using System.Drawing;
+using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
@@ -17,6 +20,8 @@ namespace PixelSort.ViewModel
         private int visible = 0;
         // Event Handler for allows UI updates when called
         public event PropertyChangedEventHandler PropertyChanged;
+        //ImageToColor imageToColorConvert = new ImageToColor();
+        
 
         public ICommand GoToSettings
         {
@@ -38,12 +43,43 @@ namespace PixelSort.ViewModel
             }
         }
 
+        private Image _SortedImage;
+
+        public Image SortedImage
+        {
+            get
+            {
+                return _SortedImage;
+            }
+            set
+            {
+                _SortedImage = value;
+                NotifyPropertyChanged();
+            }
+        }
+        public ICommand Process
+        {
+            get
+            {
+                /*
+                Color[,] toProcess = imageToColorConvert.ImageToColorArray(ImagePath);
+                SimpleSort simple = new SimpleSort(toProcess);
+                SavedImage = simple.Sort();
+                */
+                return (_goToSettings = new RelayCommand(x =>
+                {
+                    NotifyPropertyChanged();
+                }));
+            }
+        }
+
         public string ImagePath
         {
             get { return _imagePath; }
             set
             {
                 _imagePath = value;
+                SortedImage = null;
                 NotifyPropertyChanged();
             }
         }
@@ -91,8 +127,7 @@ namespace PixelSort.ViewModel
                 InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures)
             };
             Nullable<bool> result = openFileDialog.ShowDialog();
-            // Get the selected file name and display in a TextBox.
-            // Load content of file in a TextBlock
+ 
             if (result == true)
             {
                 ImagePath = openFileDialog.FileName;
