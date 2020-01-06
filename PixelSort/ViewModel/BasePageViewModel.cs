@@ -4,7 +4,6 @@ using PixelSort.Model;
 using System;
 using System.ComponentModel;
 using System.Drawing;
-using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
@@ -15,14 +14,15 @@ namespace PixelSort.ViewModel
     {
         private ICommand _goToSettings;
         private Visibility _HorizontalPanelVisibility = Visibility.Collapsed;
-        private string _imagePath = "/link.jpg";
+        private string _imagePath = "";
+        private string _SortedImage;
         private Visibility _VerticalPanelVisibility = Visibility.Visible;
+        private Model.ImageConverter imageConvert = new Model.ImageConverter();
         private int visible = 0;
+        private Sorts sorts = new Sorts();
+
         // Event Handler for allows UI updates when called
         public event PropertyChangedEventHandler PropertyChanged;
-        //ImageToColor imageToColorConvert = new ImageToColor();
-        
-
         public ICommand GoToSettings
         {
             get
@@ -33,6 +33,7 @@ namespace PixelSort.ViewModel
                 }));
             }
         }
+
         public Visibility HorizontalPanelVisibility
         {
             get { return _HorizontalPanelVisibility; }
@@ -42,37 +43,6 @@ namespace PixelSort.ViewModel
                 NotifyPropertyChanged();
             }
         }
-
-        private Image _SortedImage;
-
-        public Image SortedImage
-        {
-            get
-            {
-                return _SortedImage;
-            }
-            set
-            {
-                _SortedImage = value;
-                NotifyPropertyChanged();
-            }
-        }
-        public ICommand Process
-        {
-            get
-            {
-                /*
-                Color[,] toProcess = imageToColorConvert.ImageToColorArray(ImagePath);
-                SimpleSort simple = new SimpleSort(toProcess);
-                SavedImage = simple.Sort();
-                */
-                return (_goToSettings = new RelayCommand(x =>
-                {
-                    NotifyPropertyChanged();
-                }));
-            }
-        }
-
         public string ImagePath
         {
             get { return _imagePath; }
@@ -83,6 +53,7 @@ namespace PixelSort.ViewModel
                 NotifyPropertyChanged();
             }
         }
+
         public ICommand LoadImageClick
         {
             get
@@ -94,6 +65,35 @@ namespace PixelSort.ViewModel
             }
         }
 
+        public ICommand Process
+        {
+            get
+            {
+                Bitmap toProcess = imageConvert.ImageToBitmap(ImagePath);
+                //SimpleSort simple = new SimpleSort(toProcess);
+
+                return (new RelayCommand(x =>
+                {
+                    toProcess = sorts.SortByBrightness(toProcess);
+                    imageConvert.Save(toProcess);
+                    SortedImage = imageConvert.SavedImagePath;
+                    NotifyPropertyChanged();
+                }));
+            }
+        }
+
+        public string SortedImage
+        {
+            get
+            {
+                return _SortedImage;
+            }
+            set
+            {
+                _SortedImage = value;
+                NotifyPropertyChanged();
+            }
+        }
         public ICommand SwitchOrientation
         {
             get
@@ -114,6 +114,7 @@ namespace PixelSort.ViewModel
                 NotifyPropertyChanged();
             }
         }
+
         protected void NotifyPropertyChanged([CallerMemberName]string propertyName = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -127,7 +128,7 @@ namespace PixelSort.ViewModel
                 InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures)
             };
             Nullable<bool> result = openFileDialog.ShowDialog();
- 
+
             if (result == true)
             {
                 ImagePath = openFileDialog.FileName;
