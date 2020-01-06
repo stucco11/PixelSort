@@ -137,11 +137,19 @@ namespace PixelSort.ViewModel
                 {
                     using (FileStream fs = new FileStream(@saveName, FileMode.Create, FileAccess.ReadWrite))
                     {
-                        switch (saveName)
+                        if (saveName.EndsWith(".png"))
                         {
-
+                            image.Save(memory, ImageFormat.Png);
                         }
-                        image.Save(memory, ImageFormat.Jpeg);
+                        else if (saveName.EndsWith(".jpg"))
+                        {
+                            image.Save(memory, ImageFormat.Jpeg);
+                        }
+                        else if (saveName.EndsWith(".bmp"))
+                        {
+                            image.Save(memory, ImageFormat.Bmp);
+                        }
+                        
                         byte[] bytes = memory.ToArray();
                         fs.Write(bytes, 0, bytes.Length);
                     }
@@ -217,7 +225,7 @@ namespace PixelSort.ViewModel
         {
             OpenFileDialog openFileDialog = new OpenFileDialog
             {
-                Filter = "JPG Image (*.jpg)|*.jpg|PNG Image (*.png)|*.png|All Files (*.*)|*.*",
+                Filter = "JPG/PNG Images (*.jpg, *.png)|*.jpg;*.png|All Files (*.*)|*.*",
                 InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures)
             };
             Nullable<bool> result = openFileDialog.ShowDialog();
