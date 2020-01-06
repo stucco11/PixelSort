@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Documents;
 
 namespace PixelSort.Model
 {
-    class BrightSort : IComparer<Color>
+    internal class BrightSort : IComparer<Color>
     {
         public int Compare(Color x, Color y)
         {
@@ -17,15 +12,14 @@ namespace PixelSort.Model
                 return 0;
             }
 
-            // CompareTo() method 
+            // CompareTo() method
             return x.GetBrightness().CompareTo(y.GetBrightness());
-
         }
     }
-    class Sorts
+
+    internal class Sorts
     {
-        List<Color> pixels = new List<Color>();
-        Boolean added = false;
+        private List<Color> pixels = new List<Color>();
 
         public Bitmap SortByBrightness(Bitmap toSort)
         {
@@ -35,7 +29,6 @@ namespace PixelSort.Model
             }
             for (int i = 0; i < toSort.Height; ++i)
             {
-
                 pixels.Clear();
                 for (int j = 0; j < toSort.Width; ++j)
                 {
@@ -51,7 +44,5 @@ namespace PixelSort.Model
 
             return toSort;
         }
-
-        
     }
 }

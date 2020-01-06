@@ -4,6 +4,8 @@ using PixelSort.Model;
 using System;
 using System.ComponentModel;
 using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
@@ -12,17 +14,28 @@ namespace PixelSort.ViewModel
 {
     public class BasePageViewModel : BaseViewModel, IPageViewModel, INotifyPropertyChanged
     {
-        private ICommand _goToSettings;
-        private Visibility _HorizontalPanelVisibility = Visibility.Collapsed;
-        private string _imagePath = "";
-        private string _SortedImage;
-        private Visibility _VerticalPanelVisibility = Visibility.Visible;
-        private Model.ImageConverter imageConvert = new Model.ImageConverter();
+        private Boolean _ProcessEnabled = false;
+        private Boolean _SaveEnabled = false;
+
         private int visible = 0;
+
+        private string _imagePath = "";
+        private string _PixelDimensions = "Dimensions: File not loaded";
+        private string _SortedImage = "";
+
+        private Visibility _VerticalPanelVisibility = Visibility.Visible;
+        private Visibility _HorizontalPanelVisibility = Visibility.Collapsed;
+
+        private ICommand _goToSettings;
+
+        private Bitmap image;
+        private Model.ImageConverter imageSaveTool = new Model.ImageConverter();
         private Sorts sorts = new Sorts();
+
 
         // Event Handler for allows UI updates when called
         public event PropertyChangedEventHandler PropertyChanged;
+
         public ICommand GoToSettings
         {
             get
@@ -49,7 +62,7 @@ namespace PixelSort.ViewModel
             set
             {
                 _imagePath = value;
-                SortedImage = null;
+                SortedImage = "";
                 NotifyPropertyChanged();
             }
         }
@@ -61,24 +74,105 @@ namespace PixelSort.ViewModel
                 return (new RelayCommand(x =>
                 {
                     LoadImage(LoadImageClick, null);
+                    SaveEnabled = false;
+                    ProcessEnabled = true;
+                    PixelDimensions = (Image.FromFile(ImagePath).Width.ToString() + " x " + Image.FromFile(ImagePath).Height.ToString());
+                }));
+            }
+        }
+        public string PixelDimensions
+        {
+            get
+            {
+                return _PixelDimensions;
+            }
+            set
+            {
+                _PixelDimensions = value == null ? "Dimensions: 0 x 0" : "Dimensions: " + value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public ICommand ProcessImage
+        {
+            get
+            {
+                return (new RelayCommand(x =>
+                {
+                    image = sorts.SortByBrightness(image);
+                    imageSaveTool.Save(image);
+                    SortedImage = imageSaveTool.SavedImagePath;
+                    SaveEnabled = true;
+                    ProcessEnabled = false;
+                    NotifyPropertyChanged();
                 }));
             }
         }
 
-        public ICommand Process
+        public ICommand SaveImage
         {
             get
             {
-                Bitmap toProcess = imageConvert.ImageToBitmap(ImagePath);
-                //SimpleSort simple = new SimpleSort(toProcess);
-
                 return (new RelayCommand(x =>
                 {
-                    toProcess = sorts.SortByBrightness(toProcess);
-                    imageConvert.Save(toProcess);
-                    SortedImage = imageConvert.SavedImagePath;
-                    NotifyPropertyChanged();
+                    SaveImageMethod();
                 }));
+            }
+        }
+
+        public void SaveImageMethod()
+        {
+            SaveFileDialog saveDialog = new SaveFileDialog();
+            saveDialog.Filter = "JPG Image|*.jpg|PNG Image|*.png|Bitmap Image| *.bmp";
+            saveDialog.Title = "Save a PixelSorted Image";
+            saveDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
+            saveDialog.ShowDialog();
+
+            // If the file name is not an empty string open it for saving.
+            if (saveDialog.FileName != "")
+            {
+                string saveName = saveDialog.FileName;
+
+                using (MemoryStream memory = new MemoryStream())
+                {
+                    using (FileStream fs = new FileStream(@saveName, FileMode.Create, FileAccess.ReadWrite))
+                    {
+                        switch (saveName)
+                        {
+
+                        }
+                        image.Save(memory, ImageFormat.Jpeg);
+                        byte[] bytes = memory.ToArray();
+                        fs.Write(bytes, 0, bytes.Length);
+                    }
+                }
+
+            }
+        }
+
+        public Boolean ProcessEnabled
+        {
+            get
+            {
+                return _ProcessEnabled;
+            }
+            set
+            {
+                _ProcessEnabled = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public Boolean SaveEnabled
+        {
+            get
+            {
+                return _SaveEnabled;
+            }
+            set
+            {
+                _SaveEnabled = value;
+                NotifyPropertyChanged();
             }
         }
 
@@ -104,7 +198,6 @@ namespace PixelSort.ViewModel
                 }));
             }
         }
-
         public Visibility VerticalPanelVisibility
         {
             get { return _VerticalPanelVisibility; }
@@ -120,11 +213,11 @@ namespace PixelSort.ViewModel
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        private object LoadImage(object sender, RoutedEventArgs e)
+        private void LoadImage(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog
             {
-                Filter = "JPG Files (*.jpg)|*.jpg|PNG Files (*.png)|*.png|All Files (*.*)|*.*",
+                Filter = "JPG Image (*.jpg)|*.jpg|PNG Image (*.png)|*.png|All Files (*.*)|*.*",
                 InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures)
             };
             Nullable<bool> result = openFileDialog.ShowDialog();
@@ -132,8 +225,8 @@ namespace PixelSort.ViewModel
             if (result == true)
             {
                 ImagePath = openFileDialog.FileName;
+                image = new Bitmap(@ImagePath);
             }
-            return ImagePath;
         }
 
         private object TestOrientation()
