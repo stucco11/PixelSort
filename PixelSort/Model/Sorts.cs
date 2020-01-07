@@ -1,6 +1,9 @@
 ﻿using PixelSort.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Security;
+using System.Windows.Documents;
 
 namespace PixelSort.Model
 {
@@ -25,7 +28,7 @@ namespace PixelSort.Model
             return x.GetBrightness().CompareTo(y.GetBrightness());
         }
     }
-    
+
     /// <summary>
     /// ICompare method for a custom sort to be used for the hue of each pixel
     /// </summary>
@@ -41,6 +44,7 @@ namespace PixelSort.Model
             return x.GetHue().CompareTo(y.GetHue());
         }
     }
+
     /// <summary>
     /// Holds the sorting methods that are available for use
     /// </summary>
@@ -50,7 +54,155 @@ namespace PixelSort.Model
         private List<Color> temp = new List<Color>();
 
         /// <summary>
-        /// Sorts the image by the Color.Brightness() float value. Can be filtered with the passed in lower and upper values
+        /// Default method to be used for a new sorting instance
+        /// </summary>
+        /// <param name="path">Path of the image that will be processed</param>
+        /// <param name="selectedSort">Enum of the selected sorting method to be used</param>
+        /// <param name="lower">lower bounds for the brightness sort</param>
+        /// <param name="upper">upper bounds for the brightness sort</param>
+        /// <returns></returns>
+        public Bitmap Sort(string path, SortingMethodsEnum selectedSort, double lower, double upper, int hP, int vP)
+        {
+            Bitmap image = new Bitmap(@path);
+            int modx = image.Width % (1 + hP);
+            int mody = image.Height % (1 + vP);
+            List<Bitmap> partitions = PartitionImage(image, hP, vP, modx, mody);
+
+            for (int i = 0; i < partitions.Count; ++i)
+            {
+                {
+                    switch (selectedSort)
+                    {
+                        case SortingMethodsEnum.Brightness:
+                            partitions[i] = SortByBrightness(partitions[i], lower, upper);
+                            continue;
+
+                        case SortingMethodsEnum.Hue:
+                            partitions[i] = SortByHue(partitions[i]);
+                            continue;
+
+                        default:
+                            continue;
+                    }
+                }
+            }
+            if (hP > image.Width || vP > image.Height) {
+                return image;
+            }
+            image = Recombine(partitions, hP+1, vP+1, image);
+            return image;
+        }
+
+        private Bitmap Recombine(List<Bitmap> partitions, int hP, int vP, Bitmap image)
+        {
+            Bitmap imageRecomb = image;
+            List<Bitmap> toAdd = new List<Bitmap>();
+
+            List<Bitmap> stackedPartitions = new List<Bitmap>();
+            for (int i = 0; i < partitions.Count; ++i)
+            {
+                toAdd.Add(partitions[i]);
+                if (toAdd.Count % hP == 0)
+                {
+                    stackedPartitions.Add(MergedBitmaps(toAdd));
+                    toAdd.Clear();
+                }
+            }
+
+            foreach (Bitmap part in stackedPartitions)
+            {
+                part.RotateFlip(RotateFlipType.Rotate270FlipNone);
+            }
+
+            imageRecomb = MergedBitmaps(stackedPartitions);
+            imageRecomb.RotateFlip(RotateFlipType.Rotate90FlipNone);
+
+            return imageRecomb;
+        }
+
+        private Bitmap MergedBitmaps(List<Bitmap> maps)
+        {
+            int height = maps[0].Height;
+            int width = 0;
+            foreach (Bitmap map in maps)
+            {
+                width += map.Width;
+            }
+
+            Bitmap result = new Bitmap(width, height);
+
+            width = 0;
+            using (Graphics g = Graphics.FromImage(result))
+            {
+                foreach (Bitmap map in maps)
+                {
+                    g.DrawImage(map, width, 0);
+                    width += maps[0].Width;
+                }
+            }
+            return result;
+        }
+
+        private List<Bitmap> PartitionImage(Bitmap image, int hP, int vP, int modx, int mody)
+        {
+            int startx = 0;
+            int endx = 0;
+            int starty = 0;
+            int endy = 0;
+            List<Bitmap> partitions = new List<Bitmap>();
+            Bitmap part;
+            if (hP+1 > image.Width || vP+1 > image.Height)
+            {
+                partitions.Add(image);
+                return partitions;
+            }
+
+            for (int i = 0; i < (vP + 1); ++i)
+            {
+                for (int j = 0; j < (hP + 1); ++j)
+                {
+                    startx = j * (image.Width / (hP + 1));
+                    endx = (j + 1) * (image.Width / (hP + 1));
+                    if (endx > image.Width)
+                    {
+                        endx = image.Width - 1;
+                    }
+                    starty = i * (image.Height / (vP + 1));
+                    endy = (i + 1) * (image.Height / (vP + 1));
+                    if (endy > image.Height)
+                    {
+                        endy = image.Height - 1;
+                    }
+                    part = new Bitmap(ExtractPixels(image, startx, endx, starty, endy));
+                    partitions.Add(part);
+                }
+            }
+
+            return partitions;
+        }
+
+        private Bitmap ExtractPixels(Bitmap image, int sX, int eX, int sY, int eY)
+        {
+            int a = 0;
+            int b = 0;
+
+            Bitmap part = new Bitmap(eX - sX, eY - sY);
+            for (int j = sY; j < eY; ++j)
+            {
+                for (int i = sX; i < eX; ++i)
+                {
+                    part.SetPixel(a, b, image.GetPixel(i, j));
+                    ++a;
+                }
+                a = 0;
+                ++b;
+            }
+            return part;
+        }
+
+        /// <summary>
+        /// Sorts the image by the Color.Brightness() float value. Can be filtered with the passed
+        /// in lower and upper values
         /// </summary>
         /// <param name="toSort">Bitmap that needs to be sorted</param>
         /// <param name="lower">Lower bound for the brightness values</param>
@@ -81,7 +233,7 @@ namespace PixelSort.Model
             for (int i = 0; i < toSort.Height; ++i)
             {
                 pixels.Clear();
-                
+
                 for (int j = 0; j < toSort.Width; ++j)
                 {
                     pixels.Add(toSort.GetPixel(j, i));
@@ -143,7 +295,8 @@ namespace PixelSort.Model
         }
 
         /// <summary>
-        /// Sorts the bitmap using the float value provided by Color.GetHue(). This usually goes in the order of red - orange - yellow - green - blue - purple - red
+        /// Sorts the bitmap using the float value provided by Color.GetHue(). This usually goes in
+        /// the order of red - orange - yellow - green - blue - purple - red
         /// </summary>
         /// <param name="toSort">Bitmap that needs to be sorted</param>
         /// <returns></returns>
@@ -169,30 +322,6 @@ namespace PixelSort.Model
             }
 
             return toSort;
-        }
-
-        /// <summary>
-        /// Default method to be used for a new sorting instance
-        /// </summary>
-        /// <param name="path">Path of the image that will be processed</param>
-        /// <param name="selectedSort">Enum of the selected sorting method to be used</param>
-        /// <param name="lower">lower bounds for the brightness sort</param>
-        /// <param name="upper">upper bounds for the brightness sort</param>
-        /// <returns></returns>
-        public Bitmap Sort(string path, SortingMethodsEnum selectedSort, double lower, double upper)
-        {
-            Bitmap image = new Bitmap(@path);
-            switch (selectedSort)
-            {
-                case SortingMethodsEnum.Brightness:
-                    return SortByBrightness(image, lower, upper);
-
-                case SortingMethodsEnum.Hue:
-                    return SortByHue(image);
-
-                default:
-                    return image;
-            }
         }
     }
 }

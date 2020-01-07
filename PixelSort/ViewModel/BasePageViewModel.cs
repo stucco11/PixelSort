@@ -35,6 +35,8 @@ namespace PixelSort.ViewModel
 
         private double _LowerBright = 0.0;
         private double _UpperBright = 1.0;
+        private int _VerticalPartitions = 2;
+        private int _HorizontalPartitions = 2;
 
         private string _imagePath = "";
         private string _PixelDimensions = "Dimensions: File not loaded";
@@ -96,6 +98,31 @@ namespace PixelSort.ViewModel
             set
             {
                 _UpperBright = value;
+            }
+        }
+
+        public int VerticalPartitions
+        {
+            get
+            {
+                return _VerticalPartitions;
+            }
+            set
+            {
+                _VerticalPartitions = value;
+            }
+        }
+
+
+        public int HorizontalPartitions
+        {
+            get
+            {
+                return _HorizontalPartitions;
+            }
+            set
+            {
+                _HorizontalPartitions = value;
             }
         }
 
@@ -198,7 +225,7 @@ namespace PixelSort.ViewModel
             {
                 return (new RelayCommand(x =>
                 {
-                    image = sorts.Sort(ImagePath, SelectedSort, LowerBright, UpperBright);
+                    image = sorts.Sort(ImagePath, SelectedSort, LowerBright, UpperBright, HorizontalPartitions, VerticalPartitions);
                     imageSaveTool.SaveImage(image);
                     SortedImage = imageSaveTool.SavedImagePath;
                     SaveEnabled = true;
