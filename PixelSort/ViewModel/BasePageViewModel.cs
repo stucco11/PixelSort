@@ -19,7 +19,8 @@ namespace PixelSort.ViewModel
     public enum SortingMethodsEnum
     {
         [Description("Brightness")] Brightness,
-        [Description("Hue")] Hue
+        [Description("Hue")] Hue,
+        [Description("Saturation")] Saturation
     }
     public class BasePageViewModel : BaseViewModel, IPageViewModel, INotifyPropertyChanged
     {
@@ -35,8 +36,8 @@ namespace PixelSort.ViewModel
 
         private double _LowerBright = 0.0;
         private double _UpperBright = 1.0;
-        private int _VerticalPartitions = 2;
-        private int _HorizontalPartitions = 2;
+        private int _VerticalPartitions = 0;
+        private int _HorizontalPartitions = 0;
 
         private string _imagePath = "";
         private string _PixelDimensions = "Dimensions: File not loaded";
@@ -70,6 +71,10 @@ namespace PixelSort.ViewModel
                     BrightnessOptions = Visibility.Visible;
                 }
                 if (_SelectedSort == SortingMethodsEnum.Hue)
+                {
+                    BrightnessOptions = Visibility.Collapsed;
+                }
+                if (_SelectedSort == SortingMethodsEnum.Saturation)
                 {
                     BrightnessOptions = Visibility.Collapsed;
                 }
@@ -137,14 +142,15 @@ namespace PixelSort.ViewModel
         private ObservableCollection<string> GetEnumDescriptions()
         {
             // Creates a Dictionary set to an enum value and a string
-            Dictionary<SortingMethodsEnum, string> GameTagDescriptions = new Dictionary<SortingMethodsEnum, string>()
+            Dictionary<SortingMethodsEnum, string> MethodDescriptions = new Dictionary<SortingMethodsEnum, string>()
             {
                 { SortingMethodsEnum.Brightness, "Brightness" },
-                { SortingMethodsEnum.Hue, "Hue" }
+                { SortingMethodsEnum.Hue, "Hue" },
+                { SortingMethodsEnum.Saturation, "Saturation" }
             };
 
             // Sets _collectionEnum to a new ObservableCollection of Dictionary.values
-            _collectionEnum = new ObservableCollection<string>(GameTagDescriptions.Values);
+            _collectionEnum = new ObservableCollection<string>(MethodDescriptions.Values);
 
             // Returns _collectionEnum
             return _collectionEnum;

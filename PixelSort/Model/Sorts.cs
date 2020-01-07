@@ -1,4 +1,5 @@
 ﻿using PixelSort.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 
@@ -23,6 +24,25 @@ namespace PixelSort.Model
             }
 
             return x.GetBrightness().CompareTo(y.GetBrightness());
+        }
+    }
+
+    internal class SaturationSort : IComparer<Color>
+    {
+        /// <summary>
+        /// Compare method for the brightness of each pixel
+        /// </summary>
+        /// <param name="x">Pixel x</param>
+        /// <param name="y">Pixal y</param>
+        /// <returns></returns>
+        public int Compare(Color x, Color y)
+        {
+            if (x.GetSaturation() == 0 || y.GetSaturation() == 0)
+            {
+                return 0;
+            }
+
+            return x.GetSaturation().CompareTo(y.GetSaturation());
         }
     }
 
@@ -75,6 +95,9 @@ namespace PixelSort.Model
                     case SortingMethodsEnum.Hue:
                         return SortByHue(image);
 
+                    case SortingMethodsEnum.Saturation:
+                        return SortBySaturation(image);
+
                     default:
                         return image;
                 }
@@ -96,14 +119,38 @@ namespace PixelSort.Model
                             partitions[i] = SortByHue(partitions[i]);
                             continue;
 
+                        case SortingMethodsEnum.Saturation:
+                            partitions[i] = SortBySaturation(partitions[i]);
+                            continue;
+
                         default:
                             continue;
                     }
                 }
             }
 
-            image = Recombine(partitions, hP + 1, vP + 1, image);
+            image = Recombine(partitions, hP + 1);
             return image;
+        }
+
+        private Bitmap SortBySaturation(Bitmap toSort)
+        {
+            for (int i = 0; i < toSort.Height; ++i)
+            {
+                pixels.Clear();
+                for (int j = 0; j < toSort.Width; ++j)
+                {
+                    pixels.Add(toSort.GetPixel(j, i));
+                }
+                pixels.Sort(new SaturationSort());
+
+                for (int j = 0; j < pixels.Count; ++j)
+                {
+                    toSort.SetPixel(j, i, pixels[j]);
+                }
+            }
+
+            return toSort;
         }
 
         /// <summary>
@@ -301,7 +348,7 @@ namespace PixelSort.Model
             return partitions;
         }
 
-        private Bitmap Recombine(List<Bitmap> partitions, int hP, int vP, Bitmap image)
+        private Bitmap Recombine(List<Bitmap> partitions, int hP)
         {
             List<Bitmap> toAdd = new List<Bitmap>();
 
