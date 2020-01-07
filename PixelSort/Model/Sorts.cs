@@ -1,9 +1,6 @@
 ﻿using PixelSort.ViewModel;
-using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Security;
-using System.Windows.Documents;
 
 namespace PixelSort.Model
 {
@@ -63,7 +60,25 @@ namespace PixelSort.Model
         /// <returns></returns>
         public Bitmap Sort(string path, SortingMethodsEnum selectedSort, double lower, double upper, int hP, int vP)
         {
+            if (path == null || path.Equals(""))
+            {
+                return null;
+            }
             Bitmap image = new Bitmap(@path);
+            if (hP >= image.Width || vP >= image.Height)
+            {
+                switch (selectedSort)
+                {
+                    case SortingMethodsEnum.Brightness:
+                        return SortByBrightness(image, lower, upper);
+
+                    case SortingMethodsEnum.Hue:
+                        return SortByHue(image);
+
+                    default:
+                        return image;
+                }
+            }
             int modx = image.Width % (1 + hP);
             int mody = image.Height % (1 + vP);
             List<Bitmap> partitions = PartitionImage(image, hP, vP, modx, mody);
@@ -86,118 +101,9 @@ namespace PixelSort.Model
                     }
                 }
             }
-            if (hP > image.Width || vP > image.Height) {
-                return image;
-            }
-            image = Recombine(partitions, hP+1, vP+1, image);
+
+            image = Recombine(partitions, hP + 1, vP + 1, image);
             return image;
-        }
-
-        private Bitmap Recombine(List<Bitmap> partitions, int hP, int vP, Bitmap image)
-        {
-            Bitmap imageRecomb = image;
-            List<Bitmap> toAdd = new List<Bitmap>();
-
-            List<Bitmap> stackedPartitions = new List<Bitmap>();
-            for (int i = 0; i < partitions.Count; ++i)
-            {
-                toAdd.Add(partitions[i]);
-                if (toAdd.Count % hP == 0)
-                {
-                    stackedPartitions.Add(MergedBitmaps(toAdd));
-                    toAdd.Clear();
-                }
-            }
-
-            foreach (Bitmap part in stackedPartitions)
-            {
-                part.RotateFlip(RotateFlipType.Rotate270FlipNone);
-            }
-
-            imageRecomb = MergedBitmaps(stackedPartitions);
-            imageRecomb.RotateFlip(RotateFlipType.Rotate90FlipNone);
-
-            return imageRecomb;
-        }
-
-        private Bitmap MergedBitmaps(List<Bitmap> maps)
-        {
-            int height = maps[0].Height;
-            int width = 0;
-            foreach (Bitmap map in maps)
-            {
-                width += map.Width;
-            }
-
-            Bitmap result = new Bitmap(width, height);
-
-            width = 0;
-            using (Graphics g = Graphics.FromImage(result))
-            {
-                foreach (Bitmap map in maps)
-                {
-                    g.DrawImage(map, width, 0);
-                    width += maps[0].Width;
-                }
-            }
-            return result;
-        }
-
-        private List<Bitmap> PartitionImage(Bitmap image, int hP, int vP, int modx, int mody)
-        {
-            int startx = 0;
-            int endx = 0;
-            int starty = 0;
-            int endy = 0;
-            List<Bitmap> partitions = new List<Bitmap>();
-            Bitmap part;
-            if (hP+1 > image.Width || vP+1 > image.Height)
-            {
-                partitions.Add(image);
-                return partitions;
-            }
-
-            for (int i = 0; i < (vP + 1); ++i)
-            {
-                for (int j = 0; j < (hP + 1); ++j)
-                {
-                    startx = j * (image.Width / (hP + 1));
-                    endx = (j + 1) * (image.Width / (hP + 1));
-                    if (endx > image.Width)
-                    {
-                        endx = image.Width - 1;
-                    }
-                    starty = i * (image.Height / (vP + 1));
-                    endy = (i + 1) * (image.Height / (vP + 1));
-                    if (endy > image.Height)
-                    {
-                        endy = image.Height - 1;
-                    }
-                    part = new Bitmap(ExtractPixels(image, startx, endx, starty, endy));
-                    partitions.Add(part);
-                }
-            }
-
-            return partitions;
-        }
-
-        private Bitmap ExtractPixels(Bitmap image, int sX, int eX, int sY, int eY)
-        {
-            int a = 0;
-            int b = 0;
-
-            Bitmap part = new Bitmap(eX - sX, eY - sY);
-            for (int j = sY; j < eY; ++j)
-            {
-                for (int i = sX; i < eX; ++i)
-                {
-                    part.SetPixel(a, b, image.GetPixel(i, j));
-                    ++a;
-                }
-                a = 0;
-                ++b;
-            }
-            return part;
         }
 
         /// <summary>
@@ -223,11 +129,6 @@ namespace PixelSort.Model
             if (lower < 0.0)
             {
                 lower = 0.0;
-            }
-
-            if (toSort == null)
-            {
-                return null;
             }
 
             for (int i = 0; i < toSort.Height; ++i)
@@ -302,10 +203,6 @@ namespace PixelSort.Model
         /// <returns></returns>
         public Bitmap SortByHue(Bitmap toSort)
         {
-            if (toSort == null)
-            {
-                return null;
-            }
             for (int i = 0; i < toSort.Height; ++i)
             {
                 pixels.Clear();
@@ -322,6 +219,112 @@ namespace PixelSort.Model
             }
 
             return toSort;
+        }
+
+        private Bitmap ExtractPixels(Bitmap image, int sX, int eX, int sY, int eY)
+        {
+            int a = 0;
+            int b = 0;
+
+            Bitmap part = new Bitmap(eX - sX, eY - sY);
+            for (int j = sY; j < eY; ++j)
+            {
+                for (int i = sX; i < eX; ++i)
+                {
+                    part.SetPixel(a, b, image.GetPixel(i, j));
+                    ++a;
+                }
+                a = 0;
+                ++b;
+            }
+            return part;
+        }
+
+        private Bitmap MergedBitmaps(List<Bitmap> maps)
+        {
+            int height = maps[0].Height;
+            int width = 0;
+            foreach (Bitmap map in maps)
+            {
+                width += map.Width;
+            }
+
+            Bitmap result = new Bitmap(width, height);
+
+            width = 0;
+            using (Graphics g = Graphics.FromImage(result))
+            {
+                foreach (Bitmap map in maps)
+                {
+                    g.DrawImage(map, width, 0);
+                    width += maps[0].Width;
+                }
+            }
+            return result;
+        }
+
+        private List<Bitmap> PartitionImage(Bitmap image, int hP, int vP, int modx, int mody)
+        {
+            int startx = 0;
+            int endx = 0;
+            int starty = 0;
+            int endy = 0;
+            List<Bitmap> partitions = new List<Bitmap>();
+            Bitmap part;
+            if (hP + 1 > image.Width || vP + 1 > image.Height)
+            {
+                partitions.Add(image);
+                return partitions;
+            }
+
+            for (int i = 0; i < (vP + 1); ++i)
+            {
+                for (int j = 0; j < (hP + 1); ++j)
+                {
+                    startx = j * (image.Width / (hP + 1));
+                    endx = (j + 1) * (image.Width / (hP + 1));
+                    if (j == hP)
+                    {
+                        endx = image.Width;
+                    }
+                    starty = i * (image.Height / (vP + 1));
+                    endy = (i + 1) * (image.Height / (vP + 1));
+                    if (i == vP)
+                    {
+                        endy = image.Height;
+                    }
+                    part = new Bitmap(ExtractPixels(image, startx, endx, starty, endy));
+                    partitions.Add(part);
+                }
+            }
+
+            return partitions;
+        }
+
+        private Bitmap Recombine(List<Bitmap> partitions, int hP, int vP, Bitmap image)
+        {
+            List<Bitmap> toAdd = new List<Bitmap>();
+
+            List<Bitmap> stackedPartitions = new List<Bitmap>();
+            for (int i = 0; i < partitions.Count; ++i)
+            {
+                toAdd.Add(partitions[i]);
+                if (toAdd.Count % hP == 0)
+                {
+                    stackedPartitions.Add(MergedBitmaps(toAdd));
+                    toAdd.Clear();
+                }
+            }
+
+            foreach (Bitmap part in stackedPartitions)
+            {
+                part.RotateFlip(RotateFlipType.Rotate270FlipNone);
+            }
+
+            Bitmap imageRecomb = MergedBitmaps(stackedPartitions);
+            imageRecomb.RotateFlip(RotateFlipType.Rotate90FlipNone);
+
+            return imageRecomb;
         }
     }
 }
