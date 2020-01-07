@@ -17,6 +17,19 @@
             <Setter Property="Width" Value="Auto" />
         </Style>
 
+        <Style TargetType="Border">
+            <Setter Property="BorderBrush" Value="White" />
+            <Setter Property="BorderThickness" Value="0.5" />
+            <Setter Property="CornerRadius" Value="3" />
+        </Style>
+
+        <Style TargetType="TextBlock">
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Margin" Value="5" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="FontSize" Value="12" />
+        </Style>
+
         <Style TargetType="Button">
             <Setter Property="Background" Value="#1b1b1e" />
             <Setter Property="Foreground" Value="#dfe1e7" />
@@ -239,86 +252,96 @@
                 SelectedItem="{Binding SelectedSort}" />
 
 
-            <StackPanel MaxWidth="310" Orientation="Vertical">
-                <TextBlock
-                    Width="300"
-                    Margin="10"
-                    HorizontalAlignment="Center"
-                    FontSize="10"
-                    Foreground="White"
-                    Text="Please enter the number of horizontal and vertical partitions you would like (NOTE: You cannot have more partitions than pixels. If you do, no paritions will be counted)"
-                    TextAlignment="Center"
-                    TextWrapping="Wrap" />
+            <StackPanel MaxWidth="300" Orientation="Vertical">
 
-                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                <Border Margin="5">
+                    <Grid>
+                        <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
 
-                    <StackPanel Orientation="Vertical">
+                            <StackPanel Orientation="Vertical">
 
-                        <TextBlock
-                            Margin="10"
-                            FontSize="10"
-                            Foreground="White"
-                            Text="Vertical Partitions" />
-                        <local:NumericTextBox Margin="10" Text="{Binding VerticalPartitions, Mode=TwoWay}" />
-                    </StackPanel>
+                                <TextBlock Text="Vertical Partitions" />
+                                <local:NumericTextBox Margin="10" Text="{Binding VerticalPartitions, Mode=TwoWay}" />
+                            </StackPanel>
 
-                    <StackPanel Orientation="Vertical">
+                            <StackPanel Orientation="Vertical">
 
-                        <TextBlock
-                            Margin="10"
-                            FontSize="10"
-                            Foreground="White"
-                            Text="Horizontal Partitions" />
+                                <TextBlock Text="Horizontal Partitions" />
 
-                        <local:NumericTextBox Margin="10" Text="{Binding HorizontalPartitions, Mode=TwoWay}" />
-                    </StackPanel>
-                </StackPanel>
+                                <local:NumericTextBox Margin="10" Text="{Binding HorizontalPartitions, Mode=TwoWay}" />
+                            </StackPanel>
+                        </StackPanel>
+                    </Grid>
+                </Border>
             </StackPanel>
 
-            <StackPanel Visibility="{Binding BrightnessOptions}">
-                <TextBlock
-                    Width="200"
-                    Margin="10"
-                    HorizontalAlignment="Center"
-                    FontSize="10"
-                    Foreground="White"
-                    Text="Please enter bounds between 0 and 1"
-                    TextAlignment="Center"
-                    TextWrapping="Wrap" />
-                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-
-                    <StackPanel Orientation="Vertical">
-
+            <StackPanel MaxWidth="300" Visibility="{Binding BrightnessOptions}">
+                <Border Margin="5">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
                         <TextBlock
-                            Margin="10"
-                            FontSize="10"
-                            Foreground="White"
-                            Text="Lower Bound" />
-                        <local:NumericTextBox Margin="10" Text="{Binding LowerBright, Mode=TwoWay}" />
-                    </StackPanel>
+                            Grid.Row="0"
+                            Width="200"
+                            Text="Please enter bounds between 0 and 1"
+                            TextAlignment="Center"
+                            TextWrapping="Wrap" />
+                        <StackPanel
+                            Grid.Row="1"
+                            HorizontalAlignment="Center"
+                            Orientation="Horizontal">
 
-                    <StackPanel Orientation="Vertical">
+                            <StackPanel Orientation="Vertical">
 
-                        <TextBlock
-                            Margin="10"
-                            FontSize="10"
-                            Foreground="White"
-                            Text="Upper Bound" />
+                                <TextBlock Text="Lower Bound" />
+                                <local:NumericTextBox Margin="10" Text="{Binding LowerBright, Mode=TwoWay}" />
+                            </StackPanel>
 
-                        <local:NumericTextBox Margin="10" Text="{Binding UpperBright, Mode=TwoWay}" />
-                    </StackPanel>
-                </StackPanel>
+                            <StackPanel Orientation="Vertical">
+
+                                <TextBlock Text="Upper Bound" />
+
+                                <local:NumericTextBox Margin="10" Text="{Binding UpperBright, Mode=TwoWay}" />
+                            </StackPanel>
+                        </StackPanel>
+                    </Grid>
+                </Border>
 
             </StackPanel>
 
-            <Button
-                x:Name="Process"
-                Width="120"
-                Margin="10"
-                VerticalAlignment="Bottom"
-                Command="{Binding ProcessImage}"
-                Content="Begin Processing"
-                IsEnabled="{Binding ProcessEnabled}" />
+            <StackPanel MaxWidth="300">
+                <Border Margin="5">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Text="{Binding RotationText}" />
+                        <Slider
+                            x:Name="Rotationslider"
+                            Grid.Row="1"
+                            Width="180"
+                            Margin="10"
+                            IsMoveToPointEnabled="True"
+                            IsSnapToTickEnabled="True"
+                            Maximum="90"
+                            Minimum="-90"
+                            TickFrequency="5"
+                            Value="{Binding RotationValue}" />
+                    </Grid>
+                </Border>
+                <Button
+                    x:Name="Process"
+                    Width="120"
+                    Margin="10"
+                    VerticalAlignment="Bottom"
+                    Command="{Binding ProcessImage}"
+                    Content="Begin Processing"
+                    IsEnabled="{Binding ProcessEnabled}" />
+            </StackPanel>
         </StackPanel>
+
     </DockPanel>
 </UserControl>

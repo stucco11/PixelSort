@@ -34,6 +34,8 @@ namespace PixelSort.ViewModel
 
         private int visible = 0;
 
+        private int _RotationValue = 0;
+
         private double _LowerBright = 0.0;
         private double _UpperBright = 1.0;
         private int _VerticalPartitions = 0;
@@ -79,6 +81,34 @@ namespace PixelSort.ViewModel
                     BrightnessOptions = Visibility.Collapsed;
                 }
 
+            }
+        }
+
+        private string _RotationText = "Angle of rotation: 0°";
+        public int RotationValue
+        {
+            get
+            {
+                return _RotationValue;
+            }
+            set
+            {
+                _RotationValue = value;
+                RotationText = "Angle of rotation: " + RotationValue + "°";
+                NotifyPropertyChanged();
+            }
+        }
+
+        public string RotationText
+        {
+            get
+            {
+                return _RotationText;
+            }
+            set
+            {
+                _RotationText = value;
+                NotifyPropertyChanged();
             }
         }
 
@@ -231,7 +261,7 @@ namespace PixelSort.ViewModel
             {
                 return (new RelayCommand(x =>
                 {
-                    image = sorts.Sort(ImagePath, SelectedSort, LowerBright, UpperBright, HorizontalPartitions, VerticalPartitions);
+                    image = sorts.Sort(ImagePath, SelectedSort, LowerBright, UpperBright, HorizontalPartitions, VerticalPartitions, RotationValue);
                     imageSaveTool.SaveImage(image);
                     SortedImage = imageSaveTool.SavedImagePath;
                     SaveEnabled = true;

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Windows.Media.Imaging;
 
 namespace PixelSort.Model
 {
@@ -78,13 +79,14 @@ namespace PixelSort.Model
         /// <param name="lower">lower bounds for the brightness sort</param>
         /// <param name="upper">upper bounds for the brightness sort</param>
         /// <returns></returns>
-        public Bitmap Sort(string path, SortingMethodsEnum selectedSort, double lower, double upper, int hP, int vP)
+        public Bitmap Sort(string path, SortingMethodsEnum selectedSort, double lower, double upper, int hP, int vP, int rotationValue)
         {
             if (path == null || path.Equals(""))
             {
                 return null;
             }
             Bitmap image = new Bitmap(@path);
+            image = RotateImage(image, rotationValue);
             if (hP >= image.Width || vP >= image.Height)
             {
                 switch (selectedSort)
@@ -130,6 +132,12 @@ namespace PixelSort.Model
             }
 
             image = Recombine(partitions, hP + 1);
+            image = RotateImage(image, rotationValue * -1);
+            return image;
+        }
+
+        private Bitmap RotateImage(Bitmap image, int rotationValue)
+        {
             return image;
         }
 
