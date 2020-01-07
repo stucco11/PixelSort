@@ -198,7 +198,7 @@ namespace PixelSort.ViewModel
             {
                 return (new RelayCommand(x =>
                 {
-                    image = sorts.Sort(image, SelectedSort, LowerBright, UpperBright);
+                    image = sorts.Sort(ImagePath, SelectedSort, LowerBright, UpperBright);
                     imageSaveTool.SaveImage(image);
                     SortedImage = imageSaveTool.SavedImagePath;
                     SaveEnabled = true;
@@ -333,7 +333,6 @@ namespace PixelSort.ViewModel
             if (result == true)
             {
                 ImagePath = openFileDialog.FileName;
-                image = new Bitmap(@ImagePath);
             }
         }
 
