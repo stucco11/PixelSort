@@ -4,14 +4,14 @@ using System.IO;
 
 namespace PixelSort.Model
 {
-    internal class ImageConverter
+    internal class Save
     {
-        public ImageConverter()
+        public Save()
         {
         }
 
         public string SavedImagePath { get; set; }
-        public bool Save(Bitmap image)
+        public bool SaveImage(Bitmap image)
         {
             if (image == null)
             {

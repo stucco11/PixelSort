@@ -58,7 +58,7 @@
     </ApplicationDefinition>
     <Compile Include="EventHandling\Mediator.cs" />
     <Compile Include="EventHandling\RelayCommand.cs" />
-    <Compile Include="Model\ImageConverter.cs" />
+    <Compile Include="Model\Save.cs" />
     <Compile Include="Model\Sorts.cs" />
     <Compile Include="ViewModel\BasePageViewModel.cs" />
     <Compile Include="ViewModel\BaseViewModel.cs" />

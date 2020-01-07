@@ -16,30 +16,35 @@
             HorizontalAlignment="Center"
             Visibility="{Binding VerticalPanelVisibility}">
 
-            <Image Source="{Binding ImagePath}"
-                       Height="350"
-                       Width="1100" />
-            <Button Name="LoadImageV"
-                        Margin="10px"
-                        Content="Load Image"
-                        Command="{Binding LoadImageClick}"
-                        Width="80px" />
-            <Button x:Name="OrientationV"
-                        Command="{Binding SwitchOrientation}"
-                        Width="80px"
-                        Margin="10px"
-                        Content="Switch" />
+            <Image 
+                Source="{Binding ImagePath}"
+                Height="350"
+                Width="1100" />
+            <Button 
+                Name="LoadImageV"
+                Margin="10px"
+                Content="Load Image"
+                Command="{Binding LoadImageClick}"
+                Width="80px" />
+            <Button 
+                x:Name="OrientationV"
+                Command="{Binding SwitchOrientation}"
+                Width="80px"
+                Margin="10px"
+                Content="Switch" />
 
-            <Image Source="{Binding SortedImage, Mode=TwoWay}"
-                       Height="350"
-                       Width="1100" />
+            <Image 
+                Source="{Binding SortedImage, Mode=TwoWay}"
+                Height="350"
+                Width="1100" />
 
-            <Button Name="SaveImageV"
-                        Margin='10px'
-                        Content="Save Image"
-                        Command="{Binding SaveImage}"
-                        IsEnabled="{Binding SaveEnabled}"
-                        Width="80px" />
+            <Button 
+                Name="SaveImageV"
+                Margin='10px'
+                Content="Save Image"
+                Command="{Binding SaveImage}"
+                IsEnabled="{Binding SaveEnabled}"
+                Width="80px" />
         </StackPanel>
         <!--
         <StackPanel
@@ -49,60 +54,124 @@
             HorizontalAlignment="Center"
             Visibility="{Binding HorizontalPanelVisibility}">
 
-            <StackPanel Orientation="Vertical">
-            <Image Source="{Binding ImagePath}"
-                       Height="700"
-                       Width="500" />
-            <Button Name="LoadImageH"
-                        Margin="10px"
-                        Content="Load Image"
-                        Command="{Binding LoadImageClick}"
-                        Width="80px" />
+            <StackPanel 
+                Orientation="Vertical">
+            <Image 
+                Source="{Binding ImagePath}"
+                Height="700"
+                Width="500" />
+            <Button 
+                Name="LoadImageH"
+                Margin="10px"
+                Content="Load Image"
+                Command="{Binding LoadImageClick}"
+                Width="80px" />
             </StackPanel>
-            <Button x:Name="OrientationH"
-                        Command="{Binding SwitchOrientation}"
-                        Width="80px"
-                        Height="20px"
-                        Margin="10px"
-                        Content="Switch" />
+            <Button 
+                x:Name="OrientationH"
+                Command="{Binding SwitchOrientation}"
+                Width="80px"
+                Height="20px"
+                Margin="10px"
+                Content="Switch" />
 
-            <StackPanel Orientation="Vertical">
-            <Image Source="{Binding SortedImage}"
-                       Height="700"
-                       Width="500" />
+            <StackPanel 
+                Orientation="Vertical">
+            <Image 
+                Source="{Binding SortedImage}"
+                Height="700"
+                Width="500" />
 
-            <Button Name="SaveImageH"
-                        Margin='10px'
-                        Content="Save Image"
-                        Command="{Binding SaveImage}"
-                        Width="80px" />
+            <Button 
+                Name="SaveImageH"
+                Margin='10px'
+                Content="Save Image"
+                Command="{Binding SaveImage}"
+                Width="80px" />
             </StackPanel>
         </StackPanel>
         -->
         <StackPanel
             Background="#353638"
-                    Orientation="Vertical"
-                    DockPanel.Dock="Right">
-            <StackPanel Orientation="Horizontal"
-                        HorizontalAlignment="Center"
-                        Margin="10">
+            Orientation="Vertical"
+            DockPanel.Dock="Right">
+            <StackPanel 
+                Orientation="Horizontal"
+                HorizontalAlignment="Center"
+                Margin="10">
 
-                <TextBlock Text="PixelSort"
-                           Foreground="White"
-                           FontSize="16"
-                           HorizontalAlignment="Center" />
+                <TextBlock 
+                    Text="PixelSort"
+                    Foreground="White"
+                    FontSize="16"
+                    HorizontalAlignment="Center" />
             </StackPanel>
-            <TextBlock Text="{Binding PixelDimensions}"
-                           Foreground="White"
-                           FontSize="14"
-                           HorizontalAlignment="Center"
-                       Margin="10" />
-            <Button x:Name="Process"
-                        Content="Begin Processing"
-                        Command="{Binding ProcessImage}"
-                        Width="120"
-                        VerticalAlignment="Bottom"
-                        IsEnabled="{Binding ProcessEnabled}" />
+            <TextBlock 
+                Text="{Binding PixelDimensions}"
+                Foreground="White"
+                FontSize="14"
+                HorizontalAlignment="Center"
+                Margin="10" />
+
+            <ComboBox 
+                Name="SortComboBox"
+                Width="120"
+                Margin="10"
+                ItemsSource="{Binding SortingMethods}"
+                SelectedItem="{Binding SelectedSort}"
+                IsSynchronizedWithCurrentItem="True"/>
+            <StackPanel
+                Visibility="{Binding BrightnessOptions}">
+                <TextBlock
+                    Text="Please enter bounds between 0 and 1"
+                    FontSize="10"
+                    Foreground="White"
+                    HorizontalAlignment="Center"
+                    TextWrapping="Wrap"
+                    Width="120"
+                    TextAlignment="Center"
+                    Margin="10"/>
+                <StackPanel
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Center">
+
+                    <StackPanel
+                        Orientation="Vertical">
+
+                        <TextBlock
+                            Text="Lower Bound"
+                            Margin="10"
+                            Foreground="White"
+                            FontSize="10"/>
+                        <TextBox
+                            Margin="10"
+                            Text="{Binding LowerBright, Mode=TwoWay}"/>
+                    </StackPanel>
+                
+                    <StackPanel
+                        Orientation="Vertical">
+
+                        <TextBlock
+                            Text="Upper Bound"
+                            Margin="10"
+                            Foreground="White"
+                            FontSize="10"/>
+
+                        <TextBox
+                            Margin="10"
+                            Text="{Binding UpperBright, Mode=TwoWay}"/>
+                    </StackPanel>
+                </StackPanel>
+                
+            </StackPanel>
+
+            <Button 
+                x:Name="Process"
+                Content="Begin Processing"
+                Command="{Binding ProcessImage}"
+                Width="120"
+                VerticalAlignment="Bottom"  
+                IsEnabled="{Binding ProcessEnabled}" />
         </StackPanel>
     </DockPanel>
 </UserControl>

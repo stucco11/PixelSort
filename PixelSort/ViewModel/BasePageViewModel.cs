@@ -2,7 +2,11 @@
 using PixelSort.EventHandling;
 using PixelSort.Model;
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -12,12 +16,25 @@ using System.Windows.Input;
 
 namespace PixelSort.ViewModel
 {
+    public enum SortingMethodsEnum
+    {
+        [Description("Brightness")] Brightness,
+        [Description("Hue")] Hue
+    }
     public class BasePageViewModel : BaseViewModel, IPageViewModel, INotifyPropertyChanged
     {
+        // Stores a copy of _collectionEnum
+        private ObservableCollection<string> _collectionEnum = null;
+
+        private SortingMethodsEnum _SelectedSort = SortingMethodsEnum.Brightness;
+
         private Boolean _ProcessEnabled = false;
         private Boolean _SaveEnabled = false;
 
         private int visible = 0;
+
+        private double _LowerBright = 0.0;
+        private double _UpperBright = 1.0;
 
         private string _imagePath = "";
         private string _PixelDimensions = "Dimensions: File not loaded";
@@ -25,16 +42,86 @@ namespace PixelSort.ViewModel
 
         private Visibility _VerticalPanelVisibility = Visibility.Visible;
         private Visibility _HorizontalPanelVisibility = Visibility.Collapsed;
+        private Visibility _BrightnessOptionsVisibility = Visibility.Visible;
 
         private ICommand _goToSettings;
 
         private Bitmap image;
-        private Model.ImageConverter imageSaveTool = new Model.ImageConverter();
+        private Model.Save imageSaveTool = new Model.Save();
         private Sorts sorts = new Sorts();
 
 
         // Event Handler for allows UI updates when called
         public event PropertyChangedEventHandler PropertyChanged;
+
+        public SortingMethodsEnum SelectedSort
+        {
+            get
+            {
+                return _SelectedSort;
+            }
+            set
+            {
+                _SelectedSort = value;
+                if (_SelectedSort == SortingMethodsEnum.Brightness)
+                {
+                    BrightnessOptions = Visibility.Visible;
+                }
+                if (_SelectedSort == SortingMethodsEnum.Hue)
+                {
+                    BrightnessOptions = Visibility.Collapsed;
+                }
+
+            }
+        }
+
+        public double LowerBright
+        {
+            get
+            {
+                return _LowerBright;
+            }
+            set
+            {
+                _LowerBright = value;
+            }
+        }
+
+        public double UpperBright
+        {
+            get
+            {
+                return _UpperBright;
+            }
+            set
+            {
+                _UpperBright = value;
+            }
+        }
+
+        public ObservableCollection<string> SortingMethods
+        {
+            get
+            {
+                return GetEnumDescriptions();
+            }
+        }
+
+        private ObservableCollection<string> GetEnumDescriptions()
+        {
+            // Creates a Dictionary set to an enum value and a string
+            Dictionary<SortingMethodsEnum, string> GameTagDescriptions = new Dictionary<SortingMethodsEnum, string>()
+            {
+                { SortingMethodsEnum.Brightness, "Brightness" },
+                { SortingMethodsEnum.Hue, "Hue" }
+            };
+
+            // Sets _collectionEnum to a new ObservableCollection of Dictionary.values
+            _collectionEnum = new ObservableCollection<string>(GameTagDescriptions.Values);
+
+            // Returns _collectionEnum
+            return _collectionEnum;
+        }
 
         public ICommand GoToSettings
         {
@@ -56,6 +143,17 @@ namespace PixelSort.ViewModel
                 NotifyPropertyChanged();
             }
         }
+
+        public Visibility BrightnessOptions
+        {
+            get { return _BrightnessOptionsVisibility; }
+            set
+            {
+                _BrightnessOptionsVisibility = value;
+                NotifyPropertyChanged();
+            }
+        }
+
         public string ImagePath
         {
             get { return _imagePath; }
@@ -80,6 +178,7 @@ namespace PixelSort.ViewModel
                 }));
             }
         }
+
         public string PixelDimensions
         {
             get
@@ -99,11 +198,10 @@ namespace PixelSort.ViewModel
             {
                 return (new RelayCommand(x =>
                 {
-                    image = sorts.SortByBrightness(image);
-                    imageSaveTool.Save(image);
+                    image = sorts.Sort(image, SelectedSort, LowerBright, UpperBright);
+                    imageSaveTool.SaveImage(image);
                     SortedImage = imageSaveTool.SavedImagePath;
                     SaveEnabled = true;
-                    ProcessEnabled = false;
                     NotifyPropertyChanged();
                 }));
             }
@@ -122,10 +220,12 @@ namespace PixelSort.ViewModel
 
         public void SaveImageMethod()
         {
-            SaveFileDialog saveDialog = new SaveFileDialog();
-            saveDialog.Filter = "JPG Image|*.jpg|PNG Image|*.png|Bitmap Image| *.bmp";
-            saveDialog.Title = "Save a PixelSorted Image";
-            saveDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
+            SaveFileDialog saveDialog = new SaveFileDialog
+            {
+                Filter = "JPG Image|*.jpg|PNG Image|*.png|Bitmap Image| *.bmp",
+                Title = "Save a PixelSorted Image",
+                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures)
+            };
             saveDialog.ShowDialog();
 
             // If the file name is not an empty string open it for saving.
