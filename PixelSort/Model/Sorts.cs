@@ -139,49 +139,42 @@ namespace PixelSort.Model
 
         private Bitmap RotateImage(Bitmap image, int rotationValue)
         {
-            Point[] origPoints =
-            {
+            /*
+            Point[] points = {
                 new Point(0,0), //Upper left
                 new Point(image.Width,0), //Upper right
                 new Point(0,image.Height) //Lower left
             };
-
-            Point[] newPoints = {
-                new Point(0,0), //Upper left
-                new Point(image.Width,0), //Upper right
-                new Point(0,image.Height) //Lower left
-            };
-
 
             int maxX = 0;
             int minX = 0;
             int maxY = 0;
             int minY = 0;
 
-            for (int i = 0; i < newPoints.Length; ++i)
+            for (int i = 0; i < points.Length; ++i)
             {
-                int x = newPoints[i].X;
-                int y = newPoints[i].Y;
+                int x = points[i].X;
+                int y = points[i].Y;
 
-                newPoints[i].X = Convert.ToInt32((x * Math.Cos(rotationValue * (Math.PI / 180.0))) - (y * Math.Sin(rotationValue * (Math.PI / 180.0))));
-                newPoints[i].Y = Convert.ToInt32((x * Math.Sin(rotationValue * (Math.PI / 180.0))) + (y * Math.Cos(rotationValue * (Math.PI / 180.0))));
+                points[i].X = Convert.ToInt32((x * Math.Cos(rotationValue * (Math.PI / 180.0))) - (y * Math.Sin(rotationValue * (Math.PI / 180.0))));
+                points[i].Y = Convert.ToInt32((x * Math.Sin(rotationValue * (Math.PI / 180.0))) + (y * Math.Cos(rotationValue * (Math.PI / 180.0))));
 
 
-                if (Math.Abs(newPoints[i].X) > maxX)
+                if (Math.Abs(points[i].X) > maxX)
                 {
-                    maxX = Math.Abs(newPoints[i].X);
+                    maxX = Math.Abs(points[i].X);
                 }
-                if (newPoints[i].X < minX)
+                if (points[i].X < minX)
                 {
-                    minX = newPoints[i].X;
+                    minX = points[i].X;
                 }
-                if (Math.Abs(newPoints[i].Y) > maxY)
+                if (Math.Abs(points[i].Y) > maxY)
                 {
-                    maxY = Math.Abs(newPoints[i].Y);
+                    maxY = Math.Abs(points[i].Y);
                 }
-                if (newPoints[i].Y < minY)
+                if (points[i].Y < minY)
                 {
-                    minY = newPoints[i].Y;
+                    minY = points[i].Y;
                 }
             }
 
@@ -197,22 +190,23 @@ namespace PixelSort.Model
             int newX = maxX + Math.Abs(minX);
             int newY = maxY + Math.Abs(minY);
 
-
             Bitmap blankImage = new Bitmap(newX, newY);
 
-            for (int i = 0; i < newPoints.Length; ++i)
+            for (int i = 0; i < points.Length; ++i)
             {
-                newPoints[i].X += Math.Abs(minX);
+                points[i].X += Math.Abs(minX);
             }
 
             // Draw the image unaltered with its upper-left corner at (0, 0).
             Graphics graphic = Graphics.FromImage(blankImage);
-            graphic.DrawImage(image, newPoints);
+            graphic.DrawImage(image, points);
             graphic.Dispose();
 
             // Draw the image mapped to the parallelogram.
             
             return blankImage;
+            */
+            return image;
         }
         private Bitmap SortBySaturation(Bitmap toSort)
         {

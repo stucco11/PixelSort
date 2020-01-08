@@ -234,10 +234,12 @@ namespace PixelSort.ViewModel
             {
                 return (new RelayCommand(x =>
                 {
-                    LoadImage(LoadImageClick, null);
-                    SaveEnabled = false;
-                    ProcessEnabled = true;
-                    PixelDimensions = (Image.FromFile(ImagePath).Width.ToString() + " x " + Image.FromFile(ImagePath).Height.ToString());
+                    if (LoadImage(LoadImageClick, null))
+                    {
+                        SaveEnabled = false;
+                        ProcessEnabled = true;
+                        PixelDimensions = (Image.FromFile(ImagePath).Width.ToString() + " x " + Image.FromFile(ImagePath).Height.ToString());
+                    }
                 }));
             }
         }
@@ -384,7 +386,7 @@ namespace PixelSort.ViewModel
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        private void LoadImage(object sender, RoutedEventArgs e)
+        private bool LoadImage(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog
             {
@@ -396,7 +398,9 @@ namespace PixelSort.ViewModel
             if (result == true)
             {
                 ImagePath = openFileDialog.FileName;
+                return true;
             }
+            return false;
         }
 
         private object TestOrientation()
