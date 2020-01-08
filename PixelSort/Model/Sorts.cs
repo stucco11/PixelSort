@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Windows.Media.Imaging;
 
 namespace PixelSort.Model
@@ -138,9 +139,81 @@ namespace PixelSort.Model
 
         private Bitmap RotateImage(Bitmap image, int rotationValue)
         {
-            return image;
-        }
+            Point[] origPoints =
+            {
+                new Point(0,0), //Upper left
+                new Point(image.Width,0), //Upper right
+                new Point(0,image.Height) //Lower left
+            };
 
+            Point[] newPoints = {
+                new Point(0,0), //Upper left
+                new Point(image.Width,0), //Upper right
+                new Point(0,image.Height) //Lower left
+            };
+
+
+            int maxX = 0;
+            int minX = 0;
+            int maxY = 0;
+            int minY = 0;
+
+            for (int i = 0; i < newPoints.Length; ++i)
+            {
+                int x = newPoints[i].X;
+                int y = newPoints[i].Y;
+
+                newPoints[i].X = Convert.ToInt32((x * Math.Cos(rotationValue * (Math.PI / 180.0))) - (y * Math.Sin(rotationValue * (Math.PI / 180.0))));
+                newPoints[i].Y = Convert.ToInt32((x * Math.Sin(rotationValue * (Math.PI / 180.0))) + (y * Math.Cos(rotationValue * (Math.PI / 180.0))));
+
+
+                if (Math.Abs(newPoints[i].X) > maxX)
+                {
+                    maxX = Math.Abs(newPoints[i].X);
+                }
+                if (newPoints[i].X < minX)
+                {
+                    minX = newPoints[i].X;
+                }
+                if (Math.Abs(newPoints[i].Y) > maxY)
+                {
+                    maxY = Math.Abs(newPoints[i].Y);
+                }
+                if (newPoints[i].Y < minY)
+                {
+                    minY = newPoints[i].Y;
+                }
+            }
+
+            if (Convert.ToInt32((image.Width * Math.Sin(rotationValue * (Math.PI / 180.0))) + (image.Width * Math.Cos(rotationValue * (Math.PI / 180.0)))) < minY)
+            {
+                minY = Convert.ToInt32((image.Width * Math.Sin(rotationValue * (Math.PI / 180.0))) + (image.Height * Math.Cos(rotationValue * (Math.PI / 180.0))));
+            }
+            if (Convert.ToInt32((image.Width * Math.Sin(rotationValue * (Math.PI / 180.0))) + (image.Width * Math.Cos(rotationValue * (Math.PI / 180.0)))) > maxY)
+            {
+                maxY = Convert.ToInt32((image.Width * Math.Sin(rotationValue * (Math.PI / 180.0))) + (image.Height * Math.Cos(rotationValue * (Math.PI / 180.0))));
+            }
+
+            int newX = maxX + Math.Abs(minX);
+            int newY = maxY + Math.Abs(minY);
+
+
+            Bitmap blankImage = new Bitmap(newX, newY);
+
+            for (int i = 0; i < newPoints.Length; ++i)
+            {
+                newPoints[i].X += Math.Abs(minX);
+            }
+
+            // Draw the image unaltered with its upper-left corner at (0, 0).
+            Graphics graphic = Graphics.FromImage(blankImage);
+            graphic.DrawImage(image, newPoints);
+            graphic.Dispose();
+
+            // Draw the image mapped to the parallelogram.
+            
+            return blankImage;
+        }
         private Bitmap SortBySaturation(Bitmap toSort)
         {
             for (int i = 0; i < toSort.Height; ++i)

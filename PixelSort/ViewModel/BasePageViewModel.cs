@@ -84,7 +84,7 @@ namespace PixelSort.ViewModel
             }
         }
 
-        private string _RotationText = "Angle of rotation: 0°";
+        private string _RotationText = "NOT IMPLEMENTED: Angle of rotation: 0°";
         public int RotationValue
         {
             get
@@ -94,7 +94,7 @@ namespace PixelSort.ViewModel
             set
             {
                 _RotationValue = value;
-                RotationText = "Angle of rotation: " + RotationValue + "°";
+                RotationText = "NOT IMPLEMENTED: Angle of rotation: " + RotationValue + "°";
                 NotifyPropertyChanged();
             }
         }
