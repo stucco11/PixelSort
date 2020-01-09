@@ -2,8 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Windows.Media.Imaging;
 
 namespace PixelSort.Model
 {
@@ -29,6 +27,22 @@ namespace PixelSort.Model
         }
     }
 
+    /// <summary>
+    /// ICompare method for a custom sort to be used for the hue of each pixel
+    /// </summary>
+    internal class HueSort : IComparer<Color>
+    {
+        public int Compare(Color x, Color y)
+        {
+            if (x.GetHue() == 0 || y.GetHue() == 0)
+            {
+                return 0;
+            }
+
+            return x.GetHue().CompareTo(y.GetHue());
+        }
+    }
+
     internal class SaturationSort : IComparer<Color>
     {
         /// <summary>
@@ -45,22 +59,6 @@ namespace PixelSort.Model
             }
 
             return x.GetSaturation().CompareTo(y.GetSaturation());
-        }
-    }
-
-    /// <summary>
-    /// ICompare method for a custom sort to be used for the hue of each pixel
-    /// </summary>
-    internal class HueSort : IComparer<Color>
-    {
-        public int Compare(Color x, Color y)
-        {
-            if (x.GetHue() == 0 || y.GetHue() == 0)
-            {
-                return 0;
-            }
-
-            return x.GetHue().CompareTo(y.GetHue());
         }
     }
 
@@ -82,32 +80,35 @@ namespace PixelSort.Model
         /// <returns></returns>
         public Bitmap Sort(string path, SortingMethodsEnum selectedSort, double lower, double upper, int hP, int vP, int rotationValue)
         {
+
             if (path == null || path.Equals(""))
             {
                 return null;
             }
             Bitmap image = new Bitmap(@path);
-            image = RotateImage(image, rotationValue);
-            if (hP >= image.Width || vP >= image.Height)
+
+            Point[] points = FindRotationPoints(image, rotationValue);
+            Bitmap rotateImage = RotateImage(image, points, rotationValue);
+            if (hP >= rotateImage.Width || vP >= rotateImage.Height)
             {
                 switch (selectedSort)
                 {
                     case SortingMethodsEnum.Brightness:
-                        return SortByBrightness(image, lower, upper);
+                        return SortByBrightness(rotateImage, lower, upper);
 
                     case SortingMethodsEnum.Hue:
-                        return SortByHue(image);
+                        return SortByHue(rotateImage);
 
                     case SortingMethodsEnum.Saturation:
-                        return SortBySaturation(image);
+                        return SortBySaturation(rotateImage);
 
                     default:
-                        return image;
+                        return rotateImage;
                 }
             }
-            int modx = image.Width % (1 + hP);
-            int mody = image.Height % (1 + vP);
-            List<Bitmap> partitions = PartitionImage(image, hP, vP, modx, mody);
+            int modx = rotateImage.Width % (1 + hP);
+            int mody = rotateImage.Height % (1 + vP);
+            List<Bitmap> partitions = PartitionImage(rotateImage, hP, vP, modx, mody);
 
             for (int i = 0; i < partitions.Count; ++i)
             {
@@ -132,100 +133,10 @@ namespace PixelSort.Model
                 }
             }
 
-            image = Recombine(partitions, hP + 1);
-            image = RotateImage(image, rotationValue * -1);
+            rotateImage = Recombine(partitions, hP + 1);
+            points = FindRotationPoints(rotateImage, rotationValue * (-1));
+            image = RotateImageUndo(image, points, (-1) * rotationValue, rotateImage);
             return image;
-        }
-
-        private Bitmap RotateImage(Bitmap image, int rotationValue)
-        {
-            /*
-            Point[] points = {
-                new Point(0,0), //Upper left
-                new Point(image.Width,0), //Upper right
-                new Point(0,image.Height) //Lower left
-            };
-
-            int maxX = 0;
-            int minX = 0;
-            int maxY = 0;
-            int minY = 0;
-
-            for (int i = 0; i < points.Length; ++i)
-            {
-                int x = points[i].X;
-                int y = points[i].Y;
-
-                points[i].X = Convert.ToInt32((x * Math.Cos(rotationValue * (Math.PI / 180.0))) - (y * Math.Sin(rotationValue * (Math.PI / 180.0))));
-                points[i].Y = Convert.ToInt32((x * Math.Sin(rotationValue * (Math.PI / 180.0))) + (y * Math.Cos(rotationValue * (Math.PI / 180.0))));
-
-
-                if (Math.Abs(points[i].X) > maxX)
-                {
-                    maxX = Math.Abs(points[i].X);
-                }
-                if (points[i].X < minX)
-                {
-                    minX = points[i].X;
-                }
-                if (Math.Abs(points[i].Y) > maxY)
-                {
-                    maxY = Math.Abs(points[i].Y);
-                }
-                if (points[i].Y < minY)
-                {
-                    minY = points[i].Y;
-                }
-            }
-
-            if (Convert.ToInt32((image.Width * Math.Sin(rotationValue * (Math.PI / 180.0))) + (image.Width * Math.Cos(rotationValue * (Math.PI / 180.0)))) < minY)
-            {
-                minY = Convert.ToInt32((image.Width * Math.Sin(rotationValue * (Math.PI / 180.0))) + (image.Height * Math.Cos(rotationValue * (Math.PI / 180.0))));
-            }
-            if (Convert.ToInt32((image.Width * Math.Sin(rotationValue * (Math.PI / 180.0))) + (image.Width * Math.Cos(rotationValue * (Math.PI / 180.0)))) > maxY)
-            {
-                maxY = Convert.ToInt32((image.Width * Math.Sin(rotationValue * (Math.PI / 180.0))) + (image.Height * Math.Cos(rotationValue * (Math.PI / 180.0))));
-            }
-
-            int newX = maxX + Math.Abs(minX);
-            int newY = maxY + Math.Abs(minY);
-
-            Bitmap blankImage = new Bitmap(newX, newY);
-
-            for (int i = 0; i < points.Length; ++i)
-            {
-                points[i].X += Math.Abs(minX);
-            }
-
-            // Draw the image unaltered with its upper-left corner at (0, 0).
-            Graphics graphic = Graphics.FromImage(blankImage);
-            graphic.DrawImage(image, points);
-            graphic.Dispose();
-
-            // Draw the image mapped to the parallelogram.
-            
-            return blankImage;
-            */
-            return image;
-        }
-        private Bitmap SortBySaturation(Bitmap toSort)
-        {
-            for (int i = 0; i < toSort.Height; ++i)
-            {
-                pixels.Clear();
-                for (int j = 0; j < toSort.Width; ++j)
-                {
-                    pixels.Add(toSort.GetPixel(j, i));
-                }
-                pixels.Sort(new SaturationSort());
-
-                for (int j = 0; j < pixels.Count; ++j)
-                {
-                    toSort.SetPixel(j, i, pixels[j]);
-                }
-            }
-
-            return toSort;
         }
 
         /// <summary>
@@ -268,6 +179,22 @@ namespace PixelSort.Model
                 for (int j = 0; j < pixels.Count; ++j)
                 {
                     float bright = pixels[j].GetBrightness();
+                    if (pixels[j].A == 0)
+                    {
+                        if (b > a)
+                        {
+                            temp = new List<Color>(pixels.GetRange(a, b - a + 1));
+                            temp.Sort(new BrightSort());
+                            for (int c = 0; c < b - a; ++c)
+                            {
+                                pixels[a] = temp[c];
+                                ++a;
+                            }
+                        }
+                        b = 0;
+                        a = 0;
+                        first = false;
+                    }
                     if (bright <= upper && bright >= lower)
                     {
                         if (!first)
@@ -362,6 +289,26 @@ namespace PixelSort.Model
             return part;
         }
 
+        private Point[] FindRotationPoints(Bitmap image, int rotationValue)
+        {
+            Point[] points = {
+                new Point(0,0), //Upper left
+                new Point(image.Width,0), //Upper right
+                new Point(0,image.Height) //Lower left
+            };
+
+            for (int i = 0; i < points.Length; ++i)
+            {
+                int x = points[i].X;
+                int y = points[i].Y;
+
+                points[i].X = Convert.ToInt32((x * Math.Cos(rotationValue * (Math.PI / 180.0))) - (y * Math.Sin(rotationValue * (Math.PI / 180.0))));
+                points[i].Y = Convert.ToInt32((x * Math.Sin(rotationValue * (Math.PI / 180.0))) + (y * Math.Cos(rotationValue * (Math.PI / 180.0))));
+            }
+
+            return points;
+        }
+
         private Bitmap MergedBitmaps(List<Bitmap> maps)
         {
             int height = maps[0].Height;
@@ -447,6 +394,163 @@ namespace PixelSort.Model
             imageRecomb.RotateFlip(RotateFlipType.Rotate90FlipNone);
 
             return imageRecomb;
+        }
+
+        private Bitmap RotateImage(Bitmap image, Point[] points, int rotationValue)
+        {
+            int maxX = 0;
+            int maxY = 0;
+            int minX = 0;
+            int minY = 0;
+
+            for (int i = 0; i < points.Length; ++i)
+            {
+                if (points[i].X > maxX)
+                {
+                    maxX = points[i].X;
+                }
+                if (points[i].X < minX)
+                {
+                    minX = points[i].X;
+                }
+                if (points[i].Y > maxY)
+                {
+                    maxY =points[i].Y;
+                }
+                if (points[i].Y < minY)
+                {
+                    minY = points[i].Y;
+                }
+            }
+
+            if (Convert.ToInt32((image.Width * Math.Sin(rotationValue * (Math.PI / 180.0))) + (image.Width * Math.Cos(rotationValue * (Math.PI / 180.0)))) < minY)
+            {
+                minY = Convert.ToInt32((image.Width * Math.Sin(rotationValue * (Math.PI / 180.0))) + (image.Height * Math.Cos(rotationValue * (Math.PI / 180.0))));
+            }
+            if (Convert.ToInt32((image.Width * Math.Sin(rotationValue * (Math.PI / 180.0))) + (image.Width * Math.Cos(rotationValue * (Math.PI / 180.0)))) > maxY)
+            {
+                maxY = Convert.ToInt32((image.Width * Math.Sin(rotationValue * (Math.PI / 180.0))) + (image.Height * Math.Cos(rotationValue * (Math.PI / 180.0))));
+            }
+            if (Convert.ToInt32((image.Width * Math.Cos(rotationValue * (Math.PI / 180.0))) - (image.Height * Math.Sin(rotationValue * (Math.PI / 180.0)))) < minX)
+            {
+                minX = Convert.ToInt32((image.Width * Math.Cos(rotationValue * (Math.PI / 180.0))) - (image.Height * Math.Sin(rotationValue * (Math.PI / 180.0))));
+            }
+            if (Convert.ToInt32((image.Width * Math.Cos(rotationValue * (Math.PI / 180.0))) - (image.Height * Math.Sin(rotationValue * (Math.PI / 180.0)))) > maxX)
+            {
+                maxX = Convert.ToInt32((image.Width * Math.Cos(rotationValue * (Math.PI / 180.0))) - (image.Height * Math.Sin(rotationValue * (Math.PI / 180.0))));
+            }
+
+            int newX = maxX - minX;
+            int newY = maxY - minY;
+
+            Bitmap blankImage = new Bitmap(newX, newY);
+
+            for (int i = 0; i < points.Length; ++i)
+            {
+                points[i].X += Math.Abs(minX);
+                points[i].Y += Math.Abs(minY);
+            }
+
+            // Draw the image unaltered with its upper-left corner at (0, 0).
+            Graphics graphic = Graphics.FromImage(blankImage);
+            graphic.DrawImage(image, points);
+            graphic.Dispose();
+
+            // Draw the image mapped to the parallelogram.
+
+            return blankImage;
+        }
+
+        private Bitmap RotateImageUndo(Bitmap image, Point[] points, int rotationValue, Bitmap toRotate)
+        {
+
+            int maxX = 0;
+            int maxY = 0;
+            int minX = 0;
+            int minY = 0;
+
+            for (int i = 0; i < points.Length; ++i)
+            {
+                if (points[i].X > maxX)
+                {
+                    maxX = points[i].X;
+                }
+                if (points[i].X < minX)
+                {
+                    minX = points[i].X;
+                }
+                if (points[i].Y > maxY)
+                {
+                    maxY = points[i].Y;
+                }
+                if (points[i].Y < minY)
+                {
+                    minY = points[i].Y;
+                }
+            }
+            if (Convert.ToInt32((image.Width * Math.Sin(rotationValue * (Math.PI / 180.0))) + (image.Width * Math.Cos(rotationValue * (Math.PI / 180.0)))) < minY)
+            {
+                minY = Convert.ToInt32((image.Width * Math.Sin(rotationValue * (Math.PI / 180.0))) + (image.Height * Math.Cos(rotationValue * (Math.PI / 180.0))));
+            }
+            if (Convert.ToInt32((image.Width * Math.Sin(rotationValue * (Math.PI / 180.0))) + (image.Width * Math.Cos(rotationValue * (Math.PI / 180.0)))) > maxY)
+            {
+                maxY = Convert.ToInt32((image.Width * Math.Sin(rotationValue * (Math.PI / 180.0))) + (image.Height * Math.Cos(rotationValue * (Math.PI / 180.0))));
+            }
+            if (Convert.ToInt32((image.Width * Math.Cos(rotationValue * (Math.PI / 180.0))) - (image.Height * Math.Sin(rotationValue * (Math.PI / 180.0)))) < minX)
+            {
+                minX = Convert.ToInt32((image.Width * Math.Cos(rotationValue * (Math.PI / 180.0))) - (image.Height * Math.Sin(rotationValue * (Math.PI / 180.0))));
+            }
+            if (Convert.ToInt32((image.Width * Math.Cos(rotationValue * (Math.PI / 180.0))) - (image.Height * Math.Sin(rotationValue * (Math.PI / 180.0)))) > maxX)
+            {
+                maxX = Convert.ToInt32((image.Width * Math.Cos(rotationValue * (Math.PI / 180.0))) - (image.Height * Math.Sin(rotationValue * (Math.PI / 180.0))));
+            }
+
+            Bitmap blankImage = new Bitmap(toRotate.Width, toRotate.Height);
+
+            
+            for (int i = 0; i < points.Length; ++i)
+            {
+                points[i].X -= minX;
+                points[i].Y -= minY;
+            }
+            
+            Graphics graphics = Graphics.FromImage(blankImage);
+            graphics.DrawImage(toRotate, points);
+            graphics.Dispose();
+            Bitmap toReturn = new Bitmap(image.Width, image.Height);
+            int a = 0;
+            int b = 0;
+            for (int i = blankImage.Height - image.Height; i < blankImage.Height; ++i)
+            {
+                a = 0;
+                for (int j = blankImage.Width - image.Width; j < blankImage.Width; ++j) 
+                {                       
+                    toReturn.SetPixel(b, a, blankImage.GetPixel(i, j));
+                    a++;
+                }
+                b++;
+            }
+            return toReturn;
+        }
+
+        private Bitmap SortBySaturation(Bitmap toSort)
+        {
+            for (int i = 0; i < toSort.Height; ++i)
+            {
+                pixels.Clear();
+                for (int j = 0; j < toSort.Width; ++j)
+                {
+                    pixels.Add(toSort.GetPixel(j, i));
+                }
+                pixels.Sort(new SaturationSort());
+
+                for (int j = 0; j < pixels.Count; ++j)
+                {
+                    toSort.SetPixel(j, i, pixels[j]);
+                }
+            }
+
+            return toSort;
         }
     }
 }
