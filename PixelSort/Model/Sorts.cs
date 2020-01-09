@@ -463,25 +463,14 @@ namespace PixelSort.Model
 
         private Bitmap RotateImageUndo(Bitmap image, Point[] points, int rotationValue, Bitmap toRotate)
         {
-
-            int maxX = 0;
-            int maxY = 0;
             int minX = 0;
             int minY = 0;
 
             for (int i = 0; i < points.Length; ++i)
             {
-                if (points[i].X > maxX)
-                {
-                    maxX = points[i].X;
-                }
                 if (points[i].X < minX)
                 {
                     minX = points[i].X;
-                }
-                if (points[i].Y > maxY)
-                {
-                    maxY = points[i].Y;
                 }
                 if (points[i].Y < minY)
                 {
@@ -492,17 +481,9 @@ namespace PixelSort.Model
             {
                 minY = Convert.ToInt32((image.Width * Math.Sin(rotationValue * (Math.PI / 180.0))) + (image.Height * Math.Cos(rotationValue * (Math.PI / 180.0))));
             }
-            if (Convert.ToInt32((image.Width * Math.Sin(rotationValue * (Math.PI / 180.0))) + (image.Width * Math.Cos(rotationValue * (Math.PI / 180.0)))) > maxY)
-            {
-                maxY = Convert.ToInt32((image.Width * Math.Sin(rotationValue * (Math.PI / 180.0))) + (image.Height * Math.Cos(rotationValue * (Math.PI / 180.0))));
-            }
             if (Convert.ToInt32((image.Width * Math.Cos(rotationValue * (Math.PI / 180.0))) - (image.Height * Math.Sin(rotationValue * (Math.PI / 180.0)))) < minX)
             {
                 minX = Convert.ToInt32((image.Width * Math.Cos(rotationValue * (Math.PI / 180.0))) - (image.Height * Math.Sin(rotationValue * (Math.PI / 180.0))));
-            }
-            if (Convert.ToInt32((image.Width * Math.Cos(rotationValue * (Math.PI / 180.0))) - (image.Height * Math.Sin(rotationValue * (Math.PI / 180.0)))) > maxX)
-            {
-                maxX = Convert.ToInt32((image.Width * Math.Cos(rotationValue * (Math.PI / 180.0))) - (image.Height * Math.Sin(rotationValue * (Math.PI / 180.0))));
             }
 
             Bitmap blankImage = new Bitmap(toRotate.Width, toRotate.Height);
@@ -518,11 +499,10 @@ namespace PixelSort.Model
             graphics.DrawImage(toRotate, points);
             graphics.Dispose();
             Bitmap toReturn = new Bitmap(image.Width, image.Height);
-            int a = 0;
             int b = 0;
             for (int i = blankImage.Height - image.Height; i < blankImage.Height; ++i)
             {
-                a = 0;
+                int a = 0;
                 for (int j = blankImage.Width - image.Width; j < blankImage.Width; ++j) 
                 {                       
                     toReturn.SetPixel(b, a, blankImage.GetPixel(i, j));

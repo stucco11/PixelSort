@@ -17,6 +17,11 @@
             <Setter Property="Width" Value="Auto" />
         </Style>
 
+        <Style TargetType="RadioButton">
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Margin" Value="5" />
+            <Setter Property="FontSize" Value="12" />
+        </Style>
         <Style TargetType="Border">
             <Setter Property="BorderBrush" Value="White" />
             <Setter Property="BorderThickness" Value="0.5" />
@@ -311,6 +316,35 @@
 
             </StackPanel>
 
+            <StackPanel MaxWidth="300" Visibility="{Binding RGBOptions}">
+                <Border Margin="5">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <TextBlock
+                            Grid.Row="0"
+                            Width="200"
+                            Text="Sort by Red, Blue, or Green?"
+                            TextAlignment="Center"
+                            TextWrapping="Wrap" />
+                        <StackPanel
+                            Grid.Row="1"
+                            HorizontalAlignment="Center"
+                            Orientation="Horizontal">
+
+                            <StackPanel Orientation="Horizontal">
+                                <RadioButton Content="Red" IsChecked="{Binding RedChecked}" />
+                                <RadioButton Content="Blue" IsChecked="{Binding BlueChecked}" />
+                                <RadioButton Content="Green" IsChecked="{Binding GreenChecked}" />
+                            </StackPanel>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+            </StackPanel>
+
             <StackPanel MaxWidth="300">
                 <Border Margin="5">
                     <Grid>
@@ -327,8 +361,8 @@
                             IsMoveToPointEnabled="True"
                             IsSnapToTickEnabled="True"
                             Maximum="90"
-                            Minimum="-90"
-                            TickFrequency="5"
+                            Minimum="0"
+                            TickFrequency="90"
                             Value="{Binding RotationValue}" />
                     </Grid>
                 </Border>

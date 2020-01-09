@@ -20,7 +20,14 @@ namespace PixelSort.ViewModel
     {
         [Description("Brightness")] Brightness,
         [Description("Hue")] Hue,
-        [Description("Saturation")] Saturation
+        [Description("Saturation")] Saturation,
+        [Description("RGB")] RGB
+    }
+    public enum RGBEnum
+    {
+        Red,
+        Green,
+        Blue
     }
     public class BasePageViewModel : BaseViewModel, IPageViewModel, INotifyPropertyChanged
     {
@@ -28,6 +35,7 @@ namespace PixelSort.ViewModel
         private ObservableCollection<string> _collectionEnum = null;
 
         private SortingMethodsEnum _SelectedSort = SortingMethodsEnum.Brightness;
+        private RGBEnum _RGBChecked = RGBEnum.Red;
 
         private Boolean _ProcessEnabled = false;
         private Boolean _SaveEnabled = false;
@@ -35,6 +43,64 @@ namespace PixelSort.ViewModel
         private int visible = 0;
 
         private int _RotationValue = 0;
+
+        public bool RedChecked
+        {
+            get
+            {
+                if (_RGBChecked == RGBEnum.Red)
+                {
+                    return true;
+                } else
+                {
+                    return false;
+                }
+            }
+            set
+            {
+                _RGBChecked = RGBEnum.Red;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public bool BlueChecked
+        {
+            get
+            {
+                if (_RGBChecked == RGBEnum.Blue)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            set
+            {
+                _RGBChecked = RGBEnum.Blue;
+                NotifyPropertyChanged();
+            }
+        }
+        public bool GreenChecked
+        {
+            get
+            {
+                if (_RGBChecked == RGBEnum.Green)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            set
+            {
+                _RGBChecked = RGBEnum.Green;
+                NotifyPropertyChanged();
+            }
+        }
 
         private double _LowerBright = 0.0;
         private double _UpperBright = 1.0;
@@ -48,6 +114,7 @@ namespace PixelSort.ViewModel
         private Visibility _VerticalPanelVisibility = Visibility.Visible;
         private Visibility _HorizontalPanelVisibility = Visibility.Collapsed;
         private Visibility _BrightnessOptionsVisibility = Visibility.Visible;
+        private Visibility _RGBVisibility = Visibility.Collapsed;
 
         private ICommand _goToSettings;
 
@@ -71,20 +138,28 @@ namespace PixelSort.ViewModel
                 if (_SelectedSort == SortingMethodsEnum.Brightness)
                 {
                     BrightnessOptions = Visibility.Visible;
+                    RGBOptions = Visibility.Collapsed;
                 }
                 if (_SelectedSort == SortingMethodsEnum.Hue)
                 {
                     BrightnessOptions = Visibility.Collapsed;
+                    RGBOptions = Visibility.Collapsed;
                 }
                 if (_SelectedSort == SortingMethodsEnum.Saturation)
                 {
                     BrightnessOptions = Visibility.Collapsed;
+                    RGBOptions = Visibility.Collapsed;
+                }
+                if (_SelectedSort == SortingMethodsEnum.RGB)
+                {
+                    BrightnessOptions = Visibility.Collapsed;
+                    RGBOptions = Visibility.Visible;
                 }
 
             }
         }
 
-        private string _RotationText = "NOT IMPLEMENTED: Angle of rotation: 0°";
+        private string _RotationText = "Angle of rotation: 0°";
         public int RotationValue
         {
             get
@@ -94,7 +169,7 @@ namespace PixelSort.ViewModel
             set
             {
                 _RotationValue = value;
-                RotationText = "NOT IMPLEMENTED: Angle of rotation: " + RotationValue + "°";
+                RotationText = "Angle of rotation: " + RotationValue + "°";
                 NotifyPropertyChanged();
             }
         }
@@ -176,7 +251,8 @@ namespace PixelSort.ViewModel
             {
                 { SortingMethodsEnum.Brightness, "Brightness" },
                 { SortingMethodsEnum.Hue, "Hue" },
-                { SortingMethodsEnum.Saturation, "Saturation" }
+                { SortingMethodsEnum.Saturation, "Saturation" },
+                { SortingMethodsEnum.RGB, "RGB" }
             };
 
             // Sets _collectionEnum to a new ObservableCollection of Dictionary.values
@@ -213,6 +289,16 @@ namespace PixelSort.ViewModel
             set
             {
                 _BrightnessOptionsVisibility = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public Visibility RGBOptions
+        {
+            get { return _RGBVisibility; }
+            set
+            {
+                _RGBVisibility = value;
                 NotifyPropertyChanged();
             }
         }
