@@ -36,6 +36,7 @@ namespace PixelSort.ViewModel
         private ObservableCollection<string> _collectionEnum = null;
 
         private RGBEnum _ColorChecked = RGBEnum.Red;
+        private bool _ExtendSort = false;
         private string _ColorText = "Sort by: Red";
         private ICommand _goToSettings;
         private Visibility _HorizontalPanelVisibility = Visibility.Collapsed;
@@ -67,6 +68,18 @@ namespace PixelSort.ViewModel
 
         // Event Handler for allows UI updates when called
         public event PropertyChangedEventHandler PropertyChanged;
+
+        public bool ExtendSort
+        {
+            get
+            {
+                return _ExtendSort;
+            }
+            set
+            {
+                _ExtendSort = value;
+            }
+        }
 
         public object BlueChecked
         {
@@ -242,7 +255,7 @@ namespace PixelSort.ViewModel
             {
                 return (new RelayCommand(x =>
                 {
-                    image = sorts.Sort(ImagePath, SelectedSort, LowerBright, UpperBright, HorizontalPartitions, VerticalPartitions, RotationValue, ColorChecked);
+                    image = sorts.Sort(ImagePath, SelectedSort, LowerBright, UpperBright, HorizontalPartitions, VerticalPartitions, RotationValue, ColorChecked, ExtendSort);
                     imageSaveTool.SaveImage(image);
                     SortedImage = imageSaveTool.SavedImagePath;
                     SaveEnabled = true;

@@ -17,6 +17,13 @@
             <Setter Property="Width" Value="Auto" />
         </Style>
 
+        <Style TargetType="CheckBox">
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Margin" Value="5" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+        </Style>
+
         <Style TargetType="RadioButton">
             <Setter Property="Foreground" Value="White" />
             <Setter Property="Margin" Value="5" />
@@ -33,6 +40,7 @@
             <Setter Property="Margin" Value="5" />
             <Setter Property="HorizontalAlignment" Value="Center" />
             <Setter Property="FontSize" Value="12" />
+            <Setter Property="TextWrapping" Value="Wrap" />
         </Style>
 
         <Style TargetType="Button">
@@ -360,7 +368,8 @@
             </StackPanel>
 
             <StackPanel MaxWidth="300">
-                <Border Margin="5">
+                <Border Margin="5"
+                        Visibility="Collapsed">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition />
@@ -378,6 +387,13 @@
                             Minimum="0"
                             TickFrequency="90"
                             Value="{Binding RotationValue}" />
+                    </Grid>
+                </Border>
+                <Border Margin="5">
+                    <Grid>
+                        <CheckBox IsChecked="{Binding ExtendSort}">
+                            <TextBlock Text="Extended Sort? (Sorts the image as if it was one line of pixels)" />
+                        </CheckBox>
                     </Grid>
                 </Border>
                 <Button
