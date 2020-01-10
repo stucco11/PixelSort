@@ -368,8 +368,7 @@
             </StackPanel>
 
             <StackPanel MaxWidth="300">
-                <Border Margin="5"
-                        Visibility="Collapsed">
+                <Border Margin="5" Visibility="Collapsed">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition />
