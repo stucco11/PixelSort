@@ -326,7 +326,7 @@
                         <TextBlock
                             Grid.Row="0"
                             Width="200"
-                            Text="Sort by Red, Blue, or Green?"
+                            Text="{Binding ColorText}"
                             TextAlignment="Center"
                             TextWrapping="Wrap" />
                         <StackPanel
@@ -334,11 +334,25 @@
                             HorizontalAlignment="Center"
                             Orientation="Horizontal">
 
-                            <StackPanel Orientation="Horizontal">
-                                <RadioButton Content="Red" IsChecked="{Binding RedChecked}" />
-                                <RadioButton Content="Blue" IsChecked="{Binding BlueChecked}" />
-                                <RadioButton Content="Green" IsChecked="{Binding GreenChecked}" />
-                            </StackPanel>
+                            <Button
+                                x:Name="Red"
+                                Width="80px"
+                                Margin="10px"
+                                Command="{Binding RedChecked}"
+                                Content="Red" />
+                            <Button
+                                x:Name="Blue"
+                                Width="80px"
+                                Margin="10px"
+                                Command="{Binding BlueChecked}"
+                                Content="Blue" />
+
+                            <Button
+                                x:Name="Green"
+                                Width="80px"
+                                Margin="10px"
+                                Command="{Binding GreenChecked}"
+                                Content="Green" />
                         </StackPanel>
                     </Grid>
                 </Border>

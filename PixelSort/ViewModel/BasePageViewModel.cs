@@ -2,11 +2,9 @@
 using PixelSort.EventHandling;
 using PixelSort.Model;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -16,6 +14,13 @@ using System.Windows.Input;
 
 namespace PixelSort.ViewModel
 {
+    public enum RGBEnum
+    {
+        Red,
+        Green,
+        Blue
+    }
+
     public enum SortingMethodsEnum
     {
         [Description("Brightness")] Brightness,
@@ -23,245 +28,105 @@ namespace PixelSort.ViewModel
         [Description("Saturation")] Saturation,
         [Description("RGB")] RGB
     }
-    public enum RGBEnum
-    {
-        Red,
-        Green,
-        Blue
-    }
     public class BasePageViewModel : BaseViewModel, IPageViewModel, INotifyPropertyChanged
     {
+        private Visibility _BrightnessOptionsVisibility = Visibility.Visible;
+
         // Stores a copy of _collectionEnum
         private ObservableCollection<string> _collectionEnum = null;
 
-        private SortingMethodsEnum _SelectedSort = SortingMethodsEnum.Brightness;
-        private RGBEnum _RGBChecked = RGBEnum.Red;
-
-        private Boolean _ProcessEnabled = false;
-        private Boolean _SaveEnabled = false;
-
-        private int visible = 0;
-
-        private int _RotationValue = 0;
-
-        public bool RedChecked
-        {
-            get
-            {
-                if (_RGBChecked == RGBEnum.Red)
-                {
-                    return true;
-                } else
-                {
-                    return false;
-                }
-            }
-            set
-            {
-                _RGBChecked = RGBEnum.Red;
-                NotifyPropertyChanged();
-            }
-        }
-
-        public bool BlueChecked
-        {
-            get
-            {
-                if (_RGBChecked == RGBEnum.Blue)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            set
-            {
-                _RGBChecked = RGBEnum.Blue;
-                NotifyPropertyChanged();
-            }
-        }
-        public bool GreenChecked
-        {
-            get
-            {
-                if (_RGBChecked == RGBEnum.Green)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            set
-            {
-                _RGBChecked = RGBEnum.Green;
-                NotifyPropertyChanged();
-            }
-        }
-
-        private double _LowerBright = 0.0;
-        private double _UpperBright = 1.0;
-        private int _VerticalPartitions = 0;
+        private RGBEnum _ColorChecked = RGBEnum.Red;
+        private string _ColorText = "Sort by: Red";
+        private ICommand _goToSettings;
+        private Visibility _HorizontalPanelVisibility = Visibility.Collapsed;
         private int _HorizontalPartitions = 0;
-
         private string _imagePath = "";
+        private double _LowerBright = 0.0;
         private string _PixelDimensions = "Dimensions: File not loaded";
+        private Boolean _ProcessEnabled = false;
+        private Visibility _RGBVisibility = Visibility.Collapsed;
+        private string _RotationText = "Angle of rotation: 0°";
+        private int _RotationValue = 0;
+        private Boolean _SaveEnabled = false;
+        private SortingMethodsEnum _SelectedSort = SortingMethodsEnum.Brightness;
         private string _SortedImage = "";
 
-        private Visibility _VerticalPanelVisibility = Visibility.Visible;
-        private Visibility _HorizontalPanelVisibility = Visibility.Collapsed;
-        private Visibility _BrightnessOptionsVisibility = Visibility.Visible;
-        private Visibility _RGBVisibility = Visibility.Collapsed;
+        private double _UpperBright = 1.0;
 
-        private ICommand _goToSettings;
+        private Visibility _VerticalPanelVisibility = Visibility.Visible;
+
+        private int _VerticalPartitions = 0;
 
         private Bitmap image;
+
         private Model.Save imageSaveTool = new Model.Save();
+
         private Sorts sorts = new Sorts();
 
+        private int visible = 0;
 
         // Event Handler for allows UI updates when called
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public SortingMethodsEnum SelectedSort
+        public object BlueChecked
         {
             get
             {
-                return _SelectedSort;
-            }
-            set
-            {
-                _SelectedSort = value;
-                if (_SelectedSort == SortingMethodsEnum.Brightness)
+                return (new RelayCommand(x =>
                 {
-                    BrightnessOptions = Visibility.Visible;
-                    RGBOptions = Visibility.Collapsed;
-                }
-                if (_SelectedSort == SortingMethodsEnum.Hue)
-                {
-                    BrightnessOptions = Visibility.Collapsed;
-                    RGBOptions = Visibility.Collapsed;
-                }
-                if (_SelectedSort == SortingMethodsEnum.Saturation)
-                {
-                    BrightnessOptions = Visibility.Collapsed;
-                    RGBOptions = Visibility.Collapsed;
-                }
-                if (_SelectedSort == SortingMethodsEnum.RGB)
-                {
-                    BrightnessOptions = Visibility.Collapsed;
-                    RGBOptions = Visibility.Visible;
-                }
-
+                    ColorChecked = RGBEnum.Blue;
+                }));
             }
         }
 
-        private string _RotationText = "Angle of rotation: 0°";
-        public int RotationValue
+        public Visibility BrightnessOptions
         {
-            get
-            {
-                return _RotationValue;
-            }
+            get { return _BrightnessOptionsVisibility; }
             set
             {
-                _RotationValue = value;
-                RotationText = "Angle of rotation: " + RotationValue + "°";
+                _BrightnessOptionsVisibility = value;
                 NotifyPropertyChanged();
             }
         }
 
-        public string RotationText
+        public RGBEnum ColorChecked
         {
             get
             {
-                return _RotationText;
+                return _ColorChecked;
             }
             set
             {
-                _RotationText = value;
+                _ColorChecked = value;
+                switch (_ColorChecked)
+                {
+                    case RGBEnum.Red:
+                        ColorText = "Red";
+                        break;
+
+                    case RGBEnum.Blue:
+                        ColorText = "Blue";
+                        break;
+
+                    default:
+                        ColorText = "Green";
+                        break;
+                }
+            }
+        }
+
+        public string ColorText
+        {
+            get
+            {
+                return _ColorText;
+            }
+            set
+            {
+                _ColorText = "Sort by: " + value;
                 NotifyPropertyChanged();
             }
         }
-
-        public double LowerBright
-        {
-            get
-            {
-                return _LowerBright;
-            }
-            set
-            {
-                _LowerBright = value;
-            }
-        }
-
-        public double UpperBright
-        {
-            get
-            {
-                return _UpperBright;
-            }
-            set
-            {
-                _UpperBright = value;
-            }
-        }
-
-        public int VerticalPartitions
-        {
-            get
-            {
-                return _VerticalPartitions;
-            }
-            set
-            {
-                _VerticalPartitions = value;
-            }
-        }
-
-
-        public int HorizontalPartitions
-        {
-            get
-            {
-                return _HorizontalPartitions;
-            }
-            set
-            {
-                _HorizontalPartitions = value;
-            }
-        }
-
-        public ObservableCollection<string> SortingMethods
-        {
-            get
-            {
-                return GetEnumDescriptions();
-            }
-        }
-
-        private ObservableCollection<string> GetEnumDescriptions()
-        {
-            // Creates a Dictionary set to an enum value and a string
-            Dictionary<SortingMethodsEnum, string> MethodDescriptions = new Dictionary<SortingMethodsEnum, string>()
-            {
-                { SortingMethodsEnum.Brightness, "Brightness" },
-                { SortingMethodsEnum.Hue, "Hue" },
-                { SortingMethodsEnum.Saturation, "Saturation" },
-                { SortingMethodsEnum.RGB, "RGB" }
-            };
-
-            // Sets _collectionEnum to a new ObservableCollection of Dictionary.values
-            _collectionEnum = new ObservableCollection<string>(MethodDescriptions.Values);
-
-            // Returns _collectionEnum
-            return _collectionEnum;
-        }
-
         public ICommand GoToSettings
         {
             get
@@ -269,6 +134,17 @@ namespace PixelSort.ViewModel
                 return _goToSettings ?? (_goToSettings = new RelayCommand(x =>
                 {
                     Mediator.Notify("GoToSettings", "");
+                }));
+            }
+        }
+
+        public object GreenChecked
+        {
+            get
+            {
+                return (new RelayCommand(x =>
+                {
+                    ColorChecked = RGBEnum.Green;
                 }));
             }
         }
@@ -283,23 +159,15 @@ namespace PixelSort.ViewModel
             }
         }
 
-        public Visibility BrightnessOptions
+        public int HorizontalPartitions
         {
-            get { return _BrightnessOptionsVisibility; }
-            set
+            get
             {
-                _BrightnessOptionsVisibility = value;
-                NotifyPropertyChanged();
+                return _HorizontalPartitions;
             }
-        }
-
-        public Visibility RGBOptions
-        {
-            get { return _RGBVisibility; }
             set
             {
-                _RGBVisibility = value;
-                NotifyPropertyChanged();
+                _HorizontalPartitions = value;
             }
         }
 
@@ -330,6 +198,18 @@ namespace PixelSort.ViewModel
             }
         }
 
+        public double LowerBright
+        {
+            get
+            {
+                return _LowerBright;
+            }
+            set
+            {
+                _LowerBright = value;
+            }
+        }
+
         public string PixelDimensions
         {
             get
@@ -343,18 +223,91 @@ namespace PixelSort.ViewModel
             }
         }
 
+        public Boolean ProcessEnabled
+        {
+            get
+            {
+                return _ProcessEnabled;
+            }
+            set
+            {
+                _ProcessEnabled = value;
+                NotifyPropertyChanged();
+            }
+        }
+
         public ICommand ProcessImage
         {
             get
             {
                 return (new RelayCommand(x =>
                 {
-                    image = sorts.Sort(ImagePath, SelectedSort, LowerBright, UpperBright, HorizontalPartitions, VerticalPartitions, RotationValue);
+                    image = sorts.Sort(ImagePath, SelectedSort, LowerBright, UpperBright, HorizontalPartitions, VerticalPartitions, RotationValue, ColorChecked);
                     imageSaveTool.SaveImage(image);
                     SortedImage = imageSaveTool.SavedImagePath;
                     SaveEnabled = true;
                     NotifyPropertyChanged();
                 }));
+            }
+        }
+
+        public ICommand RedChecked
+        {
+            get
+            {
+                return (new RelayCommand(x =>
+                {
+                    ColorChecked = RGBEnum.Red;
+                }));
+            }
+        }
+        public Visibility RGBOptions
+        {
+            get { return _RGBVisibility; }
+            set
+            {
+                _RGBVisibility = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public string RotationText
+        {
+            get
+            {
+                return _RotationText;
+            }
+            set
+            {
+                _RotationText = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public int RotationValue
+        {
+            get
+            {
+                return _RotationValue;
+            }
+            set
+            {
+                _RotationValue = value;
+                RotationText = "Angle of rotation: " + RotationValue + "°";
+                NotifyPropertyChanged();
+            }
+        }
+
+        public Boolean SaveEnabled
+        {
+            get
+            {
+                return _SaveEnabled;
+            }
+            set
+            {
+                _SaveEnabled = value;
+                NotifyPropertyChanged();
             }
         }
 
@@ -369,6 +322,102 @@ namespace PixelSort.ViewModel
             }
         }
 
+        public SortingMethodsEnum SelectedSort
+        {
+            get
+            {
+                return _SelectedSort;
+            }
+            set
+            {
+                _SelectedSort = value;
+                if (_SelectedSort == SortingMethodsEnum.Brightness)
+                {
+                    BrightnessOptions = Visibility.Visible;
+                    RGBOptions = Visibility.Collapsed;
+                }
+                if (_SelectedSort == SortingMethodsEnum.Hue)
+                {
+                    BrightnessOptions = Visibility.Collapsed;
+                    RGBOptions = Visibility.Collapsed;
+                }
+                if (_SelectedSort == SortingMethodsEnum.Saturation)
+                {
+                    BrightnessOptions = Visibility.Collapsed;
+                    RGBOptions = Visibility.Collapsed;
+                }
+                if (_SelectedSort == SortingMethodsEnum.RGB)
+                {
+                    BrightnessOptions = Visibility.Collapsed;
+                    RGBOptions = Visibility.Visible;
+                }
+            }
+        }
+        public string SortedImage
+        {
+            get
+            {
+                return _SortedImage;
+            }
+            set
+            {
+                _SortedImage = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public ObservableCollection<string> SortingMethods
+        {
+            get
+            {
+                return GetEnumDescriptions();
+            }
+        }
+
+        public ICommand SwitchOrientation
+        {
+            get
+            {
+                return (new RelayCommand(x =>
+                {
+                    TestOrientation();
+                }));
+            }
+        }
+
+        public double UpperBright
+        {
+            get
+            {
+                return _UpperBright;
+            }
+            set
+            {
+                _UpperBright = value;
+            }
+        }
+
+        public Visibility VerticalPanelVisibility
+        {
+            get { return _VerticalPanelVisibility; }
+            set
+            {
+                _VerticalPanelVisibility = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public int VerticalPartitions
+        {
+            get
+            {
+                return _VerticalPartitions;
+            }
+            set
+            {
+                _VerticalPartitions = value;
+            }
+        }
         public void SaveImageMethod()
         {
             SaveFileDialog saveDialog = new SaveFileDialog
@@ -400,70 +449,11 @@ namespace PixelSort.ViewModel
                         {
                             image.Save(memory, ImageFormat.Bmp);
                         }
-                        
+
                         byte[] bytes = memory.ToArray();
                         fs.Write(bytes, 0, bytes.Length);
                     }
                 }
-
-            }
-        }
-
-        public Boolean ProcessEnabled
-        {
-            get
-            {
-                return _ProcessEnabled;
-            }
-            set
-            {
-                _ProcessEnabled = value;
-                NotifyPropertyChanged();
-            }
-        }
-
-        public Boolean SaveEnabled
-        {
-            get
-            {
-                return _SaveEnabled;
-            }
-            set
-            {
-                _SaveEnabled = value;
-                NotifyPropertyChanged();
-            }
-        }
-
-        public string SortedImage
-        {
-            get
-            {
-                return _SortedImage;
-            }
-            set
-            {
-                _SortedImage = value;
-                NotifyPropertyChanged();
-            }
-        }
-        public ICommand SwitchOrientation
-        {
-            get
-            {
-                return (new RelayCommand(x =>
-                {
-                    TestOrientation();
-                }));
-            }
-        }
-        public Visibility VerticalPanelVisibility
-        {
-            get { return _VerticalPanelVisibility; }
-            set
-            {
-                _VerticalPanelVisibility = value;
-                NotifyPropertyChanged();
             }
         }
 
@@ -472,6 +462,23 @@ namespace PixelSort.ViewModel
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
+        private ObservableCollection<string> GetEnumDescriptions()
+        {
+            // Creates a Dictionary set to an enum value and a string
+            Dictionary<SortingMethodsEnum, string> MethodDescriptions = new Dictionary<SortingMethodsEnum, string>()
+            {
+                { SortingMethodsEnum.Brightness, "Brightness" },
+                { SortingMethodsEnum.Hue, "Hue" },
+                { SortingMethodsEnum.Saturation, "Saturation" },
+                { SortingMethodsEnum.RGB, "RGB" }
+            };
+
+            // Sets _collectionEnum to a new ObservableCollection of Dictionary.values
+            _collectionEnum = new ObservableCollection<string>(MethodDescriptions.Values);
+
+            // Returns _collectionEnum
+            return _collectionEnum;
+        }
         private bool LoadImage(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog
