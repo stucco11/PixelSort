@@ -17,6 +17,12 @@
             <Setter Property="Width" Value="Auto" />
         </Style>
 
+        <Style TargetType="ComboBox">
+
+            <Setter Property="Background" Value="Yellow" />
+
+        </Style>
+
         <Style TargetType="CheckBox">
             <Setter Property="Foreground" Value="White" />
             <Setter Property="FontSize" Value="12" />
@@ -179,8 +185,7 @@
                 Height="350"
                 Source="{Binding SortedImage, Mode=TwoWay}" />
 
-            <StackPanel Orientation="Horizontal"
-                        HorizontalAlignment="Center">
+            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
                 <Button
                     Name="SaveImageV"
                     Width="80px"
@@ -188,12 +193,12 @@
                     Command="{Binding SaveImage}"
                     Content="Save Image"
                     IsEnabled="{Binding SaveEnabled}" />
-                <Button 
+                <Button
                     Width="130px"
                     Margin="10px"
-                    Command="{Binding EditSorted}" 
+                    Command="{Binding EditSorted}"
                     Content="Edit Processed Image"
-                    IsEnabled="{Binding SaveEnabled}"/>
+                    IsEnabled="{Binding SaveEnabled}" />
             </StackPanel>
         </StackPanel>
 
@@ -399,9 +404,40 @@
                 </Border>
                 <Border Margin="5">
                     <Grid>
-                        <CheckBox IsChecked="{Binding ExtendSort}">
-                            <TextBlock Text="Extended Sort? (Sorts the image as if it was one line of pixels)" />
-                        </CheckBox>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <TextBlock
+                            Grid.Row="0"
+                            Width="200"
+                            Text="{Binding AddOpsText}"
+                            TextAlignment="Center"
+                            TextWrapping="Wrap" />
+                        <StackPanel
+                            Grid.Row="1"
+                            HorizontalAlignment="Center"
+                            Orientation="Horizontal">
+
+                            <Button
+                                x:Name="Extend"
+                                Width="80px"
+                                Margin="10px"
+                                Command="{Binding ExtendChecked}"
+                                Content="Extend" />
+                            <Button
+                                x:Name="Spiral"
+                                Width="80px"
+                                Margin="10px"
+                                Command="{Binding SpiralChecked}"
+                                Content="Spiral" />
+                            <Button
+                                x:Name="None"
+                                Width="80px"
+                                Margin="10px"
+                                Command="{Binding NoneChecked}"
+                                Content="None" />
+                        </StackPanel>
                     </Grid>
                 </Border>
                 <Button

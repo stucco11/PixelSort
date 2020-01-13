@@ -9,12 +9,19 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Navigation;
 
 namespace PixelSort.ViewModel
 {
+    public enum AdditionalOptionsEnum
+    {
+        Extend,
+        Spiral,
+        None
+    }
     public enum RGBEnum
     {
         Red,
@@ -37,10 +44,13 @@ namespace PixelSort.ViewModel
         private ObservableCollection<string> _collectionEnum = null;
 
         private RGBEnum _ColorChecked = RGBEnum.Red;
+        private AdditionalOptionsEnum _AddOps = AdditionalOptionsEnum.None;
         private bool _ExtendSort = false;
         private string _ColorText = "Sort by: Red";
+        private string _AddOpsText = "Additional Options: None";
         private ICommand _goToSettings;
         private Visibility _HorizontalPanelVisibility = Visibility.Collapsed;
+        private Visibility _ExtendVisibility = Visibility.Visible;
         private int _HorizontalPartitions = 0;
         private string _imagePath = "";
         private double _LowerBright = 0.0;
@@ -93,6 +103,39 @@ namespace PixelSort.ViewModel
             }
         }
 
+        public object NoneChecked
+        {
+            get
+            {
+                return (new RelayCommand(x =>
+                {
+                    AddOps = AdditionalOptionsEnum.None;
+                }));
+            }
+        }
+
+        public object ExtendChecked
+        {
+            get
+            {
+                return (new RelayCommand(x =>
+                {
+                    AddOps = AdditionalOptionsEnum.Extend;
+                }));
+            }
+        }
+
+        public object SpiralChecked
+        {
+            get
+            {
+                return (new RelayCommand(x =>
+                {
+                    AddOps = AdditionalOptionsEnum.Spiral;
+                }));
+            }
+        }
+
         public Visibility BrightnessOptions
         {
             get { return _BrightnessOptionsVisibility; }
@@ -139,6 +182,44 @@ namespace PixelSort.ViewModel
                 }
             }
         }
+        public AdditionalOptionsEnum AddOps
+        {
+            get
+            {
+                return _AddOps;
+            }
+            set
+            {
+                _AddOps = value;
+                switch (_AddOps)
+                {
+                    case AdditionalOptionsEnum.Extend:
+                        AddOpsText = "Extend";
+                        break;
+
+                    case AdditionalOptionsEnum.Spiral:
+                        AddOpsText = "Spiral";
+                        break;
+
+                    default:
+                        AddOpsText = "None";
+                        break;
+                }
+            }
+        }
+
+        public string AddOpsText
+        {
+            get
+            {
+                return _AddOpsText;
+            }
+            set
+            {
+                _AddOpsText = "Additional Options: " + value;
+                NotifyPropertyChanged();
+            }
+        }
 
         public string ColorText
         {
@@ -180,6 +261,19 @@ namespace PixelSort.ViewModel
             set
             {
                 _HorizontalPanelVisibility = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public Visibility ExtendVisibility
+        {
+            get
+            {
+                return _ExtendVisibility;
+            }
+            set
+            {
+                _ExtendVisibility = value;
                 NotifyPropertyChanged();
             }
         }
@@ -267,7 +361,7 @@ namespace PixelSort.ViewModel
             {
                 return (new RelayCommand(x =>
                 {
-                    image = sorts.Sort(ImagePath, SelectedSort, LowerBright, UpperBright, HorizontalPartitions, VerticalPartitions, RotationValue, ColorChecked, ExtendSort);
+                    image = sorts.Sort(ImagePath, SelectedSort, LowerBright, UpperBright, HorizontalPartitions, VerticalPartitions, RotationValue, ColorChecked, AddOps);
                     imageSaveTool.SaveImage(image);
                     SortedImage = imageSaveTool.SavedImagePath;
                     SaveEnabled = true;
