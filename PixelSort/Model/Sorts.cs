@@ -6,14 +6,17 @@ using System.Security.Authentication.ExtendedProtection;
 
 namespace PixelSort.Model
 {
+    /// <summary>
+    /// ICompare method of a custom sort to be used for sorting pixels by their blue values
+    /// </summary>
     internal class BlueSort : IComparer<Color>
     {
         /// <summary>
         /// Compare method for the brightness of each pixel
         /// </summary>
         /// <param name="x">Pixel x</param>
-        /// <param name="y">Pixal y</param>
-        /// <returns></returns>
+        /// <param name="y">Pixel y</param>
+        /// <returns>-1, 0, or 1 (-1 means x < y, 0 means x == y, 1 means x > y)</returns>
         public int Compare(Color x, Color y)
         {
             if (x.B == 0 || y.B == 0)
@@ -34,8 +37,8 @@ namespace PixelSort.Model
         /// Compare method for the brightness of each pixel
         /// </summary>
         /// <param name="x">Pixel x</param>
-        /// <param name="y">Pixal y</param>
-        /// <returns></returns>
+        /// <param name="y">Pixel y</param>
+        /// <returns>-1, 0, or 1 (-1 means x < y, 0 means x == y, 1 means x > y)</returns>
         public int Compare(Color x, Color y)
         {
             if (x.GetBrightness() == 0 || y.GetBrightness() == 0)
@@ -47,14 +50,17 @@ namespace PixelSort.Model
         }
     }
 
+    /// <summary>
+    /// ICompare method of a custom sort to be used for sorting pixels by their green values
+    /// </summary>
     internal class GreenSort : IComparer<Color>
     {
         /// <summary>
         /// Compare method for the brightness of each pixel
         /// </summary>
         /// <param name="x">Pixel x</param>
-        /// <param name="y">Pixal y</param>
-        /// <returns></returns>
+        /// <param name="y">Pixel y</param>
+        /// <returns>-1, 0, or 1 (-1 means x < y, 0 means x == y, 1 means x > y)</returns>
         public int Compare(Color x, Color y)
         {
             if (x.G == 0 || y.G == 0)
@@ -71,6 +77,12 @@ namespace PixelSort.Model
     /// </summary>
     internal class HueSort : IComparer<Color>
     {
+        /// <summary>
+        /// Compare method for the hue of each pixel
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns>-1, 0, or 1 (-1 means x < y, 0 means x == y, 1 means x > y)</returns>
         public int Compare(Color x, Color y)
         {
             if (x.GetHue() == 0 || y.GetHue() == 0)
@@ -82,14 +94,17 @@ namespace PixelSort.Model
         }
     }
 
+    /// <summary>
+    /// ICompare method of a custom sort to be used for sorting pixels by their red values
+    /// </summary>
     internal class RedSort : IComparer<Color>
     {
         /// <summary>
         /// Compare method for the brightness of each pixel
         /// </summary>
         /// <param name="x">Pixel x</param>
-        /// <param name="y">Pixal y</param>
-        /// <returns></returns>
+        /// <param name="y">Pixel y</param>
+        /// <returns>-1, 0, or 1 (-1 means x < y, 0 means x == y, 1 means x > y)</returns>
         public int Compare(Color x, Color y)
         {
             if (x.R == 0 || y.R == 0)
@@ -101,14 +116,17 @@ namespace PixelSort.Model
         }
     }
 
+    /// <summary>
+    /// ICompare method for a custom sort to be used for the saturation of each pixel
+    /// </summary>
     internal class SaturationSort : IComparer<Color>
     {
         /// <summary>
         /// Compare method for the brightness of each pixel
         /// </summary>
         /// <param name="x">Pixel x</param>
-        /// <param name="y">Pixal y</param>
-        /// <returns></returns>
+        /// <param name="y">Pixel y</param>
+        /// <returns>-1, 0, or 1 (-1 means x < y, 0 means x == y, 1 means x > y)</returns>
         public int Compare(Color x, Color y)
         {
             if (x.GetSaturation() == 0 || y.GetSaturation() == 0)
