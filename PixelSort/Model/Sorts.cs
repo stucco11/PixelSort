@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Security.Authentication.ExtendedProtection;
 
 namespace PixelSort.Model
 {
@@ -11,12 +10,9 @@ namespace PixelSort.Model
     /// </summary>
     internal class BlueSort : IComparer<Color>
     {
-        /// <summary>
-        /// Compare method for the brightness of each pixel
-        /// </summary>
-        /// <param name="x">Pixel x</param>
-        /// <param name="y">Pixel y</param>
-        /// <returns>-1, 0, or 1 (-1 means x < y, 0 means x == y, 1 means x > y)</returns>
+        /// <summary> Compare method for the brightness of each pixel </summary> <param
+        /// name="x">Pixel x</param> <param name="y">Pixel y</param> <returns>-1, 0, or 1 (-1 means
+        /// x < y, 0 means x == y, 1 means x > y)</returns>
         public int Compare(Color x, Color y)
         {
             if (x.B == 0 || y.B == 0)
@@ -33,12 +29,9 @@ namespace PixelSort.Model
     /// </summary>
     internal class BrightSort : IComparer<Color>
     {
-        /// <summary>
-        /// Compare method for the brightness of each pixel
-        /// </summary>
-        /// <param name="x">Pixel x</param>
-        /// <param name="y">Pixel y</param>
-        /// <returns>-1, 0, or 1 (-1 means x < y, 0 means x == y, 1 means x > y)</returns>
+        /// <summary> Compare method for the brightness of each pixel </summary> <param
+        /// name="x">Pixel x</param> <param name="y">Pixel y</param> <returns>-1, 0, or 1 (-1 means
+        /// x < y, 0 means x == y, 1 means x > y)</returns>
         public int Compare(Color x, Color y)
         {
             if (x.GetBrightness() == 0 || y.GetBrightness() == 0)
@@ -55,12 +48,9 @@ namespace PixelSort.Model
     /// </summary>
     internal class GreenSort : IComparer<Color>
     {
-        /// <summary>
-        /// Compare method for the brightness of each pixel
-        /// </summary>
-        /// <param name="x">Pixel x</param>
-        /// <param name="y">Pixel y</param>
-        /// <returns>-1, 0, or 1 (-1 means x < y, 0 means x == y, 1 means x > y)</returns>
+        /// <summary> Compare method for the brightness of each pixel </summary> <param
+        /// name="x">Pixel x</param> <param name="y">Pixel y</param> <returns>-1, 0, or 1 (-1 means
+        /// x < y, 0 means x == y, 1 means x > y)</returns>
         public int Compare(Color x, Color y)
         {
             if (x.G == 0 || y.G == 0)
@@ -77,12 +67,9 @@ namespace PixelSort.Model
     /// </summary>
     internal class HueSort : IComparer<Color>
     {
-        /// <summary>
-        /// Compare method for the hue of each pixel
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <returns>-1, 0, or 1 (-1 means x < y, 0 means x == y, 1 means x > y)</returns>
+        /// <summary> Compare method for the hue of each pixel </summary> <param name="x"></param>
+        /// <param name="y"></param> <returns>-1, 0, or 1 (-1 means x < y, 0 means x == y, 1 means x
+        /// > y)</returns>
         public int Compare(Color x, Color y)
         {
             if (x.GetHue() == 0 || y.GetHue() == 0)
@@ -99,12 +86,9 @@ namespace PixelSort.Model
     /// </summary>
     internal class RedSort : IComparer<Color>
     {
-        /// <summary>
-        /// Compare method for the brightness of each pixel
-        /// </summary>
-        /// <param name="x">Pixel x</param>
-        /// <param name="y">Pixel y</param>
-        /// <returns>-1, 0, or 1 (-1 means x < y, 0 means x == y, 1 means x > y)</returns>
+        /// <summary> Compare method for the brightness of each pixel </summary> <param
+        /// name="x">Pixel x</param> <param name="y">Pixel y</param> <returns>-1, 0, or 1 (-1 means
+        /// x < y, 0 means x == y, 1 means x > y)</returns>
         public int Compare(Color x, Color y)
         {
             if (x.R == 0 || y.R == 0)
@@ -121,12 +105,9 @@ namespace PixelSort.Model
     /// </summary>
     internal class SaturationSort : IComparer<Color>
     {
-        /// <summary>
-        /// Compare method for the brightness of each pixel
-        /// </summary>
-        /// <param name="x">Pixel x</param>
-        /// <param name="y">Pixel y</param>
-        /// <returns>-1, 0, or 1 (-1 means x < y, 0 means x == y, 1 means x > y)</returns>
+        /// <summary> Compare method for the brightness of each pixel </summary> <param
+        /// name="x">Pixel x</param> <param name="y">Pixel y</param> <returns>-1, 0, or 1 (-1 means
+        /// x < y, 0 means x == y, 1 means x > y)</returns>
         public int Compare(Color x, Color y)
         {
             if (x.GetSaturation() == 0 || y.GetSaturation() == 0)
@@ -156,19 +137,28 @@ namespace PixelSort.Model
         /// <returns></returns>
         public Bitmap Sort(string path, SortingMethodsEnum selectedSort, double lower, double upper, int hP, int vP, int rotationValue, RGBEnum colorChecked, AdditionalOptionsEnum addOps)
         {
+            // if path is null or "", return null
             if (path == null || path.Equals(""))
             {
                 return null;
             }
+
+            // creates two Bitmaps of the same image, handy for keeping the original width/height
+            // and other data
             Bitmap image = new Bitmap(@path);
             Bitmap origImage = new Bitmap(@path);
+
+            // if Extend is clicked, ExtendSort the image
             if (addOps == AdditionalOptionsEnum.Extend)
             {
                 image = ExtendSort(image);
             }
 
+            // If the number of horizontal or vertical partitions is greater than or equal to the
+            // width or height of the image, don't partition the image and sort with the whole image instead
             if (hP >= image.Width || vP >= image.Height)
             {
+                // Switch statement for using the correct sort based on the selected method
                 switch (selectedSort)
                 {
                     case SortingMethodsEnum.Brightness:
@@ -191,6 +181,9 @@ namespace PixelSort.Model
                         break;
                 }
             }
+            // If the number of partitions wanted is within the image's width/height, split the
+            // image into (horizontal partitions + 1) * (vertical partitions + 1), sort the
+            // paritions, and then stitch them back together
             else
             {
                 int modx = image.Width % (1 + hP);
@@ -226,218 +219,15 @@ namespace PixelSort.Model
 
                 image = Recombine(partitions, hP + 1);
             }
+
+            // if Extending was selected, then put the image back together so it's no longer a single line of pixels
             if (addOps == AdditionalOptionsEnum.Extend)
             {
                 image = UnExtendSort(image, origImage);
             }
+
+            // return the image to the user
             return image;
-        }
-
-        private Bitmap SortBySpiral(Bitmap image, SortingMethodsEnum selectedSort, double lower, double upper, RGBEnum color)
-        {
-            int endWidth = image.Width - 1;
-            int endHeight = image.Height - 1;
-            int startWidth = 0;
-            int startHeight = 0;
-
-            while (endWidth >= startWidth && endHeight >= startHeight)
-            {
-                pixels.Clear();
-                for (int i = startWidth; i < endWidth; ++i)
-                {
-                    pixels.Add(image.GetPixel(i, startHeight));
-                }
-                for (int i = startHeight; i < endHeight; ++i)
-                {
-                    pixels.Add(image.GetPixel(endWidth, i));
-                }
-                for (int i = endWidth; i > startWidth; --i)
-                {
-                    pixels.Add(image.GetPixel(i, endHeight));
-                }
-                for (int i = endHeight; i > startHeight; --i)
-                {
-                    pixels.Add(image.GetPixel(startWidth, i));
-                }
-
-                if (selectedSort == SortingMethodsEnum.Brightness)
-                {
-                    if (upper < lower)
-                    {
-                        double mid = upper;
-                        upper = lower;
-                        lower = mid;
-                    }
-                    if (upper > 1.0)
-                    {
-                        upper = 1.0;
-                    }
-                    if (lower < 0.0)
-                    {
-                        lower = 0.0;
-                    }
-
-                    int a = 0;
-                    bool first = false;
-                    int b = 0;
-
-                    for (int j = 0; j < pixels.Count; ++j)
-                    {
-                        float bright = pixels[j].GetBrightness();
-                        if (pixels[j].A == 0)
-                        {
-                            if (b > a)
-                            {
-                                temp = new List<Color>(pixels.GetRange(a, b - a + 1));
-                                temp.Sort(new BrightSort());
-                                for (int c = 0; c < b - a; ++c)
-                                {
-                                    pixels[a] = temp[c];
-                                    ++a;
-                                }
-                            }
-                            b = 0;
-                            a = 0;
-                            first = false;
-                        }
-                        if (bright <= upper && bright >= lower)
-                        {
-                            if (!first)
-                            {
-                                a = j;
-                                first = true;
-                                continue;
-                            }
-                            b = j;
-                        }
-                        else
-                        {
-                            if (b > a)
-                            {
-                                temp = new List<Color>(pixels.GetRange(a, b - a + 1));
-                                temp.Sort(new BrightSort());
-                                for (int c = 0; c < b - a; ++c)
-                                {
-                                    pixels[a] = temp[c];
-                                    ++a;
-                                }
-                            }
-                            b = 0;
-                            a = 0;
-                            first = false;
-                        }
-                    }
-
-                    if (b > a)
-                    {
-                        temp = new List<Color>(pixels.GetRange(a, b - a + 1));
-                        temp.Sort(new BrightSort());
-                        int d = b - a;
-                        for (int c = 0; c < d; ++c)
-                        {
-                            pixels[a] = temp[c];
-                            ++a;
-                        }
-                    }
-
-                    pixels.Sort(new BrightSort());
-                }
-
-                if (selectedSort == SortingMethodsEnum.Hue)
-                {
-                    pixels.Sort(new HueSort());
-                }
-
-                if (selectedSort == SortingMethodsEnum.Saturation)
-                {
-                    pixels.Sort(new SaturationSort());
-                }
-                if (selectedSort == SortingMethodsEnum.RGB)
-                {
-                    switch (color)
-                    {
-                        case RGBEnum.Blue:
-                            pixels.Sort(new BlueSort());
-                            break;
-
-                        case RGBEnum.Green:
-                            pixels.Sort(new GreenSort());
-                            break;
-
-                        default:
-                            pixels.Sort(new RedSort());
-                            break;
-                    }
-                }
-
-                int count = 0;
-
-                for (int i = startWidth; i < endWidth; ++i)
-                {
-                    image.SetPixel(i, startHeight, pixels[count]);
-                    count++;
-                }
-                for (int i = startHeight; i < endHeight; ++i)
-                {
-                    pixels.Add(image.GetPixel(endWidth, i));
-                    image.SetPixel(endWidth, i, pixels[count]);
-                    count++;
-                }
-                for (int i = endWidth; i > startWidth; --i)
-                {
-                    image.SetPixel(i, endHeight, pixels[count]);
-                    count++;
-                }
-                for (int i = endHeight; i > startHeight; --i)
-                {
-                    pixels.Add(image.GetPixel(startWidth, i));
-                    image.SetPixel(startWidth, i, pixels[count]);
-                    count++;
-                }
-
-                ++startWidth;
-                ++startHeight;
-                --endWidth;
-                --endHeight;
-            }
-            return image;
-        }
-
-        private Bitmap UnExtendSort(Bitmap image, Bitmap origImage)
-        {
-            int width = origImage.Width;
-            int height = origImage.Height;
-            int a = 0;
-            Bitmap newImage = new Bitmap(width, height);
-
-            for (int i = 0; i < height; ++i)
-            {
-                for (int j = 0; j < width; ++j)
-                {
-                    newImage.SetPixel(j, i, image.GetPixel(a, 0));
-                    ++a;
-                }
-            }
-
-            return newImage;
-        }
-
-        private Bitmap ExtendSort(Bitmap image)
-        {
-            int width = image.Width;
-            int height = image.Height;
-            Bitmap newImage = new Bitmap(width * height, 1);
-            int a = 0;
-            for (int i = 0; i < height; ++i)
-            {
-                for (int j = 0; j < width; ++j)
-                {
-                    newImage.SetPixel(a, 0, image.GetPixel(j,i));
-                    ++a;
-                }
-            }
-
-            return newImage;
         }
 
         /// <summary>
@@ -450,12 +240,15 @@ namespace PixelSort.Model
         /// <returns></returns>
         public Bitmap SortByBrightness(Bitmap toSort, double lower, double upper, AdditionalOptionsEnum addOps, SortingMethodsEnum selectedSort)
         {
+            // Ensures that upper > lower
             if (upper < lower)
             {
                 double mid = upper;
                 upper = lower;
                 lower = mid;
             }
+
+            // Sets upper and lower so that neither is outside of the bounds of 0.0 and 1.0
             if (upper > 1.0)
             {
                 upper = 1.0;
@@ -465,88 +258,39 @@ namespace PixelSort.Model
                 lower = 0.0;
             }
 
+            // If spiral wasn't selected, then run the following code
             if (addOps != AdditionalOptionsEnum.Spiral)
             {
+                // loops through the height of the image
                 for (int i = 0; i < toSort.Height; ++i)
                 {
+                    // clears pixels every time
                     pixels.Clear();
 
+                    // Adds each row to pixels
                     for (int j = 0; j < toSort.Width; ++j)
                     {
                         pixels.Add(toSort.GetPixel(j, i));
                     }
 
-                    int a = 0;
-                    bool first = false;
-                    int b = 0;
-                    for (int j = 0; j < pixels.Count; ++j)
-                    {
-                        float bright = pixels[j].GetBrightness();
-                        if (pixels[j].A == 0)
-                        {
-                            if (b > a)
-                            {
-                                temp = new List<Color>(pixels.GetRange(a, b - a + 1));
-                                temp.Sort(new BrightSort());
-                                for (int c = 0; c < b - a; ++c)
-                                {
-                                    pixels[a] = temp[c];
-                                    ++a;
-                                }
-                            }
-                            b = 0;
-                            a = 0;
-                            first = false;
-                        }
-                        if (bright <= upper && bright >= lower)
-                        {
-                            if (!first)
-                            {
-                                a = j;
-                                first = true;
-                                continue;
-                            }
-                            b = j;
-                        }
-                        else
-                        {
-                            if (b > a)
-                            {
-                                temp = new List<Color>(pixels.GetRange(a, b - a + 1));
-                                temp.Sort(new BrightSort());
-                                for (int c = 0; c < b - a; ++c)
-                                {
-                                    pixels[a] = temp[c];
-                                    ++a;
-                                }
-                            }
-                            b = 0;
-                            a = 0;
-                            first = false;
-                        }
-                    }
+                    // Sort pixels with respect to bounds
+                    pixels = BrightSortWithBounds(pixels, lower, upper);
 
-                    if (b > a)
-                    {
-                        temp = new List<Color>(pixels.GetRange(a, b - a + 1));
-                        temp.Sort(new BrightSort());
-                        int d = b - a;
-                        for (int c = 0; c < d; ++c)
-                        {
-                            pixels[a] = temp[c];
-                            ++a;
-                        }
-                    }
-
+                    // place each pixel from pixels into the correct row of the image
                     for (int j = 0; j < pixels.Count; ++j)
                     {
                         toSort.SetPixel(j, i, pixels[j]);
                     }
                 }
-            } else
+            }
+
+            // if spiral was selected, then run SortBySpiral
+            else
             {
                 toSort = SortBySpiral(toSort, selectedSort, lower, upper, RGBEnum.Blue);
             }
+
+            // return the image
             return toSort;
         }
 
@@ -558,8 +302,10 @@ namespace PixelSort.Model
         /// <returns></returns>
         public Bitmap SortByHue(Bitmap toSort, AdditionalOptionsEnum addOps, SortingMethodsEnum selectedSort)
         {
+            // If spiral wasn't selected, then run the following code
             if (addOps != AdditionalOptionsEnum.Spiral)
             {
+                // Iterate through each row of the image, sort that row according to HueSort, and then replace the unsorted row with the sorted row
                 for (int i = 0; i < toSort.Height; ++i)
                 {
                     pixels.Clear();
@@ -574,7 +320,10 @@ namespace PixelSort.Model
                         toSort.SetPixel(j, i, pixels[j]);
                     }
                 }
-            } else
+            }
+
+            // if spiral was selected, then run SortBySpiral
+            else
             {
                 toSort = SortBySpiral(toSort, selectedSort, 0, 0, RGBEnum.Blue);
             }
@@ -582,6 +331,38 @@ namespace PixelSort.Model
             return toSort;
         }
 
+        /// <summary>
+        /// Transforms an image of x by y into an image of 1 by x * y
+        /// </summary>
+        /// <param name="image">The image to transform into a line</param>
+        /// <returns>Returns the image that is now 1 by width * height</returns>
+        private Bitmap ExtendSort(Bitmap image)
+        {
+            int width = image.Width;
+            int height = image.Height;
+            Bitmap newImage = new Bitmap(width * height, 1);
+            int a = 0;
+            for (int i = 0; i < height; ++i)
+            {
+                for (int j = 0; j < width; ++j)
+                {
+                    newImage.SetPixel(a, 0, image.GetPixel(j, i));
+                    ++a;
+                }
+            }
+
+            return newImage;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="image">The image to pull the pixel data from</param>
+        /// <param name="sX">Starting value for x</param>
+        /// <param name="eX">Ending value for x</param>
+        /// <param name="sY">Starting value for y</param>
+        /// <param name="eY">Ending value for y</param>
+        /// <returns>Returns a bitmaps that is image from sx to ex and sy to ey</returns>
         private Bitmap ExtractPixels(Bitmap image, int sX, int eX, int sY, int eY)
         {
             int a = 0;
@@ -621,6 +402,11 @@ namespace PixelSort.Model
             return points;
         }
 
+        /// <summary>
+        /// Merges bitmaps into one bitmap from left to right
+        /// </summary>
+        /// <param name="maps">The list of bitmaps to merge together</param>
+        /// <returns>Returns a Bitmap that is merged from the passed in maps</returns>
         private Bitmap MergedBitmaps(List<Bitmap> maps)
         {
             int height = maps[0].Height;
@@ -644,6 +430,15 @@ namespace PixelSort.Model
             return result;
         }
 
+        /// <summary>
+        /// Takes the image and creates partitions of the image that are returned in a list
+        /// </summary>
+        /// <param name="image">Image to partitions</param>
+        /// <param name="hP">Number of horizontal partitions</param>
+        /// <param name="vP">Number of vertical partitions</param>
+        /// <param name="modx">Remaining number of pixels in width</param>
+        /// <param name="mody">Remaining number of pixels in height</param>
+        /// <returns></returns>
         private List<Bitmap> PartitionImage(Bitmap image, int hP, int vP, int modx, int mody)
         {
             int startx = 0;
@@ -682,6 +477,12 @@ namespace PixelSort.Model
             return partitions;
         }
 
+        /// <summary>
+        /// Fuses the list of Bitmaps back into the image that is the correct height and width based on the number of horizontal partitions
+        /// </summary>
+        /// <param name="partitions">List of Bitmaps that will be combined</param>
+        /// <param name="hP">Number of horizontal paritions</param>
+        /// <returns>Returns a combined bitmap</returns>
         private Bitmap Recombine(List<Bitmap> partitions, int hP)
         {
             List<Bitmap> toAdd = new List<Bitmap>();
@@ -776,7 +577,6 @@ namespace PixelSort.Model
 
         private Bitmap RotateImageUndo(Bitmap image, Point[] points, int rotationValue, Bitmap toRotate)
         {
-            
             int minX = 0;
             int minY = 0;
 
@@ -826,8 +626,17 @@ namespace PixelSort.Model
             return toReturn;
         }
 
+        /// <summary>
+        /// Sorts the image by the selected RGB value (either Red, Green, or Blue)
+        /// </summary>
+        /// <param name="toSort">Image that is to be sorted</param>
+        /// <param name="colorChecked">The color that is selected</param>
+        /// <param name="addOps">Additional operations that are selected</param>
+        /// <param name="selectedSort">The selected sorting method</param>
+        /// <returns>Returns the image that is sorted by Reds, Greens, or Blues</returns>
         private Bitmap SortByRGB(Bitmap toSort, RGBEnum colorChecked, AdditionalOptionsEnum addOps, SortingMethodsEnum selectedSort)
         {
+            // If spiral wasn't selected, then run the following code
             if (addOps != AdditionalOptionsEnum.Spiral)
             {
                 for (int i = 0; i < toSort.Height; ++i)
@@ -838,6 +647,7 @@ namespace PixelSort.Model
                         pixels.Add(toSort.GetPixel(j, i));
                     }
 
+                    // Will select which color sort to use based on the selected color
                     switch (colorChecked)
                     {
                         case RGBEnum.Red:
@@ -858,16 +668,28 @@ namespace PixelSort.Model
                         toSort.SetPixel(j, i, pixels[j]);
                     }
                 }
-            } else
+            }
+
+            // if spiral was selected, then run SortBySpiral
+            else
             {
                 toSort = SortBySpiral(toSort, selectedSort, 0, 0, colorChecked);
             }
-                
 
+            // returns the sorted image
             return toSort;
         }
+
+        /// <summary>
+        /// Sorts the image by saturation
+        /// </summary>
+        /// <param name="toSort">Image that is to be sorted</param>
+        /// <param name="addOps">Additional operations that are selected</param>
+        /// <param name="selectedSort">The selected sorting method</param>
+        /// <returns></returns>
         private Bitmap SortBySaturation(Bitmap toSort, AdditionalOptionsEnum addOps, SortingMethodsEnum selectedSort)
         {
+            // If spiral wasn't selected, then run the following code
             if (addOps != AdditionalOptionsEnum.Spiral)
             {
                 for (int i = 0; i < toSort.Height; ++i)
@@ -884,12 +706,244 @@ namespace PixelSort.Model
                         toSort.SetPixel(j, i, pixels[j]);
                     }
                 }
-            }else
+            }
+
+            // if spiral was selected, then run SortBySpiral
+            else
             {
                 toSort = SortBySpiral(toSort, selectedSort, 0, 0, RGBEnum.Blue);
             }
 
+            // returns the sorted image
             return toSort;
+        }
+
+        /// <summary>
+        /// This will sort the passed in image by moving from the exterior perimeter to the interior and sorting the perimeter as though it was one singular line
+        /// </summary>
+        /// <param name="image">The image to be sorted</param>
+        /// <param name="selectedSort">The selected sorting method</param>
+        /// <param name="lower">The lower bound (used for brightness sorting)</param>
+        /// <param name="upper">The upper bound (used for brightness sorting)</param>
+        /// <param name="color">The selected color (used for RGB sorting)</param>
+        /// <returns>Returns a sorted image</returns>
+        private Bitmap SortBySpiral(Bitmap image, SortingMethodsEnum selectedSort, double lower, double upper, RGBEnum color)
+        {
+            //Sets the intial boundaries for the min and max values of Width and Height
+            int endWidth = image.Width - 1;
+            int endHeight = image.Height - 1;
+            int startWidth = 0;
+            int startHeight = 0;
+
+            // Iteratively moves in from the exterior to the center and sorts the collected pixels from the perimeter
+            while (endWidth >= startWidth && endHeight >= startHeight)
+            {
+                // Clear pixels and add the pixels from the perimeter to it
+                pixels.Clear();
+                for (int i = startWidth; i < endWidth; ++i)
+                {
+                    pixels.Add(image.GetPixel(i, startHeight));
+                }
+                for (int i = startHeight; i < endHeight; ++i)
+                {
+                    pixels.Add(image.GetPixel(endWidth, i));
+                }
+                for (int i = endWidth; i > startWidth; --i)
+                {
+                    pixels.Add(image.GetPixel(i, endHeight));
+                }
+                for (int i = endHeight; i > startHeight; --i)
+                {
+                    pixels.Add(image.GetPixel(startWidth, i));
+                }
+
+                // Sort pixels with respect to bounds by Brightness
+                if (selectedSort == SortingMethodsEnum.Brightness)
+                {
+                    pixels = BrightSortWithBounds(pixels, lower, upper);
+                }
+
+                // Sort pixels by Hue
+                if (selectedSort == SortingMethodsEnum.Hue)
+                {
+                    pixels.Sort(new HueSort());
+                }
+
+                // Sort pixels by Saturation
+                if (selectedSort == SortingMethodsEnum.Saturation)
+                {
+                    pixels.Sort(new SaturationSort());
+                }
+
+                // Sort pixels with respect to RGB
+                if (selectedSort == SortingMethodsEnum.RGB)
+                {
+                    switch (color)
+                    {
+                        case RGBEnum.Blue:
+                            pixels.Sort(new BlueSort());
+                            break;
+
+                        case RGBEnum.Green:
+                            pixels.Sort(new GreenSort());
+                            break;
+
+                        default:
+                            pixels.Sort(new RedSort());
+                            break;
+                    }
+                }
+
+                // Put the pixels that were sorted back into the perimeter of the image
+                int count = 0;
+
+                for (int i = startWidth; i < endWidth; ++i)
+                {
+                    image.SetPixel(i, startHeight, pixels[count]);
+                    count++;
+                }
+                for (int i = startHeight; i < endHeight; ++i)
+                {
+                    pixels.Add(image.GetPixel(endWidth, i));
+                    image.SetPixel(endWidth, i, pixels[count]);
+                    count++;
+                }
+                for (int i = endWidth; i > startWidth; --i)
+                {
+                    image.SetPixel(i, endHeight, pixels[count]);
+                    count++;
+                }
+                for (int i = endHeight; i > startHeight; --i)
+                {
+                    pixels.Add(image.GetPixel(startWidth, i));
+                    image.SetPixel(startWidth, i, pixels[count]);
+                    count++;
+                }
+
+                ++startWidth;
+                ++startHeight;
+                --endWidth;
+                --endHeight;
+            }
+
+            // image is returned
+            return image;
+        }
+
+        /// <summary>
+        /// Sorts the passed in list by brightness with respect to boundaries
+        /// </summary>
+        /// <param name="pixelList">List of pixels to be sorted</param>
+        /// <param name="lower">Lower boundary</param>
+        /// <param name="upper">Upper boundary</param>
+        /// <returns>Sorted list of pixels</returns>
+        private List<Color> BrightSortWithBounds(List<Color> pixelList, double lower, double upper)
+        {
+            if (upper < lower)
+            {
+                double mid = upper;
+                upper = lower;
+                lower = mid;
+            }
+            if (upper > 1.0)
+            {
+                upper = 1.0;
+            }
+            if (lower < 0.0)
+            {
+                lower = 0.0;
+            }
+
+            int a = 0;
+            bool first = false;
+            int b = 0;
+
+            for (int j = 0; j < pixelList.Count; ++j)
+            {
+                float bright = pixelList[j].GetBrightness();
+                if (pixelList[j].A == 0)
+                {
+                    if (b > a)
+                    {
+                        temp = new List<Color>(pixelList.GetRange(a, b - a + 1));
+                        temp.Sort(new BrightSort());
+                        for (int c = 0; c < b - a; ++c)
+                        {
+                            pixelList[a] = temp[c];
+                            ++a;
+                        }
+                    }
+                    b = 0;
+                    a = 0;
+                    first = false;
+                }
+                if (bright <= upper && bright >= lower)
+                {
+                    if (!first)
+                    {
+                        a = j;
+                        first = true;
+                        continue;
+                    }
+                    b = j;
+                }
+                else
+                {
+                    if (b > a)
+                    {
+                        temp = new List<Color>(pixelList.GetRange(a, b - a + 1));
+                        temp.Sort(new BrightSort());
+                        for (int c = 0; c < b - a; ++c)
+                        {
+                            pixelList[a] = temp[c];
+                            ++a;
+                        }
+                    }
+                    b = 0;
+                    a = 0;
+                    first = false;
+                }
+            }
+
+            if (b > a)
+            {
+                temp = new List<Color>(pixelList.GetRange(a, b - a + 1));
+                temp.Sort(new BrightSort());
+                int d = b - a;
+                for (int c = 0; c < d; ++c)
+                {
+                    pixelList[a] = temp[c];
+                    ++a;
+                }
+            }
+            pixelList.Sort(new BrightSort());
+
+            return pixelList;
+        }
+
+        /// <summary>
+        /// Puts the extended list of pixels back into an image of the appropriate size
+        /// </summary>
+        /// <param name="image">Extended image</param>
+        /// <param name="origImage">Original image (used for sizing)</param>
+        /// <returns>Returns an image of the correct size</returns>
+        private Bitmap UnExtendSort(Bitmap image, Bitmap origImage)
+        {
+            int width = origImage.Width;
+            int height = origImage.Height;
+            int a = 0;
+            Bitmap newImage = new Bitmap(width, height);
+
+            for (int i = 0; i < height; ++i)
+            {
+                for (int j = 0; j < width; ++j)
+                {
+                    newImage.SetPixel(j, i, image.GetPixel(a, 0));
+                    ++a;
+                }
+            }
+
+            return newImage;
         }
     }
 }
