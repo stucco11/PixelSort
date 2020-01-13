@@ -179,13 +179,22 @@
                 Height="350"
                 Source="{Binding SortedImage, Mode=TwoWay}" />
 
-            <Button
-                Name="SaveImageV"
-                Width="80px"
-                Margin="10px"
-                Command="{Binding SaveImage}"
-                Content="Save Image"
-                IsEnabled="{Binding SaveEnabled}" />
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Center">
+                <Button
+                    Name="SaveImageV"
+                    Width="80px"
+                    Margin="10px"
+                    Command="{Binding SaveImage}"
+                    Content="Save Image"
+                    IsEnabled="{Binding SaveEnabled}" />
+                <Button 
+                    Width="130px"
+                    Margin="10px"
+                    Command="{Binding EditSorted}" 
+                    Content="Edit Processed Image"
+                    IsEnabled="{Binding SaveEnabled}"/>
+            </StackPanel>
         </StackPanel>
 
         <!--

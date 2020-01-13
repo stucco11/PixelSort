@@ -11,6 +11,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Navigation;
 
 namespace PixelSort.ViewModel
 {
@@ -102,6 +103,17 @@ namespace PixelSort.ViewModel
             }
         }
 
+        public object EditSorted
+        {
+            get
+            {
+                return (new RelayCommand(x =>
+                {
+                    ImagePath = SortedImage;
+                    SortedImage = ImagePath;
+                }));
+            }
+        }
         public RGBEnum ColorChecked
         {
             get
