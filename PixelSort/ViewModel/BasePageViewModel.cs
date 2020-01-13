@@ -176,6 +176,10 @@ namespace PixelSort.ViewModel
                         ColorText = "Blue";
                         break;
 
+                    case RGBEnum.Green:
+                        ColorText = "Green";
+                        break;
+
                     default:
                         ColorText = "Green";
                         break;
@@ -199,6 +203,10 @@ namespace PixelSort.ViewModel
 
                     case AdditionalOptionsEnum.Spiral:
                         AddOpsText = "Spiral";
+                        break;
+
+                    case AdditionalOptionsEnum.None:
+                        AddOpsText = "None";
                         break;
 
                     default:

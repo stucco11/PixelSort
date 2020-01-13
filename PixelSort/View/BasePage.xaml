@@ -156,97 +156,119 @@
     </UserControl.Resources>
 
     <DockPanel>
-        <StackPanel
-            Margin="20"
-            HorizontalAlignment="Center"
-            DockPanel.Dock="Left"
-            Orientation="Vertical"
-            Visibility="{Binding VerticalPanelVisibility}">
-
-            <Image
-                Width="1100"
-                Height="350"
-                Source="{Binding ImagePath}" />
-            <Button
-                Name="LoadImageV"
-                Width="80px"
-                Margin="10px"
-                Command="{Binding LoadImageClick}"
-                Content="Load Image" />
-            <Button
-                x:Name="OrientationV"
-                Width="80px"
-                Margin="10px"
-                Command="{Binding SwitchOrientation}"
-                Content="Switch" />
-
-            <Image
-                Width="1100"
-                Height="350"
-                Source="{Binding SortedImage, Mode=TwoWay}" />
-
-            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+        <StackPanel DockPanel.Dock="Left"
+                    VerticalAlignment="Center">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <StackPanel Grid.Row="0">
+                    <Image
+                        Width="1100"
+                        Height="350"
+                        Margin="10"
+                        VerticalAlignment="Top"
+                        Source="{Binding ImagePath}" />
+                </StackPanel>
                 <Button
-                    Name="SaveImageV"
+                    Grid.Row="1"
                     Width="80px"
                     Margin="10px"
-                    Command="{Binding SaveImage}"
-                    Content="Save Image"
-                    IsEnabled="{Binding SaveEnabled}" />
+                    VerticalAlignment="Center"
+                    Command="{Binding LoadImageClick}"
+                    Content="Load Image" />
+                <!--
                 <Button
-                    Width="130px"
+                    Width="80px"
                     Margin="10px"
-                    Command="{Binding EditSorted}"
-                    Content="Edit Processed Image"
-                    IsEnabled="{Binding SaveEnabled}" />
-            </StackPanel>
+                    Command="{Binding SwitchOrientation}"
+                    Content="Switch" />
+                -->
+                <StackPanel Grid.Row="2">
+                    <Image
+                        Width="1100"
+                        Height="350"
+                        Margin="10"
+                        VerticalAlignment="Bottom"
+                        Source="{Binding SortedImage, Mode=TwoWay}" />
+                </StackPanel>
+                <StackPanel
+                    Grid.Row="3"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Bottom"
+                    Orientation="Horizontal">
+                    <Button
+                        Width="80px"
+                        Margin="10px"
+                        Command="{Binding SaveImage}"
+                        Content="Save Image"
+                        IsEnabled="{Binding SaveEnabled}" />
+                    <Button
+                        Width="130px"
+                        Margin="10px"
+                        Command="{Binding EditSorted}"
+                        Content="Edit Processed Image"
+                        IsEnabled="{Binding SaveEnabled}" />
+                </StackPanel>
+
+
+            </Grid>
         </StackPanel>
 
         <!--
         <StackPanel
             Margin="20"
+            HorizontalAlignment="Center"
             DockPanel.Dock="Left"
             Orientation="Horizontal"
-            HorizontalAlignment="Center"
             Visibility="{Binding HorizontalPanelVisibility}">
 
-            <StackPanel
-                Orientation="Vertical">
-            <Image
-                Source="{Binding ImagePath}"
-                Height="700"
-                Width="500" />
-            <Button
-                Name="LoadImageH"
-                Margin="10px"
-                Content="Load Image"
-                Command="{Binding LoadImageClick}"
-                Width="80px" />
+            <StackPanel Orientation="Vertical">
+                <Image
+                    Width="500"
+                    Height="700"
+                    Source="{Binding ImagePath}" />
+                <Button
+                    Name="LoadImageH"
+                    Width="80px"
+                    Margin="10px"
+                    Command="{Binding LoadImageClick}"
+                    Content="Load Image" />
             </StackPanel>
             <Button
                 x:Name="OrientationH"
-                Command="{Binding SwitchOrientation}"
                 Width="80px"
                 Height="20px"
                 Margin="10px"
+                Command="{Binding SwitchOrientation}"
                 Content="Switch" />
 
-            <StackPanel
-                Orientation="Vertical">
-            <Image
-                Source="{Binding SortedImage}"
-                Height="700"
-                Width="500" />
+            <StackPanel Orientation="Vertical">
+                <Image
+                    Width="500"
+                    Height="700"
+                    Source="{Binding SortedImage}" />
 
-            <Button
-                Name="SaveImageH"
-                Margin='10px'
-                Content="Save Image"
-                Command="{Binding SaveImage}"
-                Width="80px" />
+                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                    <Button
+                        Name="SaveImageV"
+                        Width="80px"
+                        Margin="10px"
+                        Command="{Binding SaveImage}"
+                        Content="Save Image"
+                        IsEnabled="{Binding SaveEnabled}" />
+                    <Button
+                        Width="130px"
+                        Margin="10px"
+                        Command="{Binding EditSorted}"
+                        Content="Edit Processed Image"
+                        IsEnabled="{Binding SaveEnabled}" />
+                </StackPanel>
             </StackPanel>
-        </StackPanel>
-        -->
+        </StackPanel>-->
 
         <StackPanel
             Background="#353638"
