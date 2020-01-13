@@ -861,22 +861,6 @@ namespace PixelSort.Model
             for (int j = 0; j < pixelList.Count; ++j)
             {
                 float bright = pixelList[j].GetBrightness();
-                if (pixelList[j].A == 0)
-                {
-                    if (b > a)
-                    {
-                        temp = new List<Color>(pixelList.GetRange(a, b - a + 1));
-                        temp.Sort(new BrightSort());
-                        for (int c = 0; c < b - a; ++c)
-                        {
-                            pixelList[a] = temp[c];
-                            ++a;
-                        }
-                    }
-                    b = 0;
-                    a = 0;
-                    first = false;
-                }
                 if (bright <= upper && bright >= lower)
                 {
                     if (!first)
@@ -893,7 +877,7 @@ namespace PixelSort.Model
                     {
                         temp = new List<Color>(pixelList.GetRange(a, b - a + 1));
                         temp.Sort(new BrightSort());
-                        for (int c = 0; c < b - a; ++c)
+                        for (int c = 0; c < temp.Count; ++c)
                         {
                             pixelList[a] = temp[c];
                             ++a;
@@ -916,7 +900,6 @@ namespace PixelSort.Model
                     ++a;
                 }
             }
-            pixelList.Sort(new BrightSort());
 
             return pixelList;
         }
