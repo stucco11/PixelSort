@@ -13,6 +13,7 @@ PixelSorting is something that I've been interested in for a while, but I haven'
 ## Currently Available Sorting Methods
 
 * Brightness - Evaluates the brightness of each pixel and sorts in order from 0 to 1
+  * The user is able to manually set the upper and lower bounds for filtering out specific brightness values
 * Hue - Goes in the order of Red, Orange, Yellow, Green, Blue, Violet
 * Saturation - Evaluates the saturation of each pixel and sorts in order from 0 to 1
 * RGB - the user is able to select whether to sort pixels based on the respective amounts of Red, Green, or Blue in the row
