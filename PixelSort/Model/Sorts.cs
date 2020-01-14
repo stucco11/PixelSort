@@ -677,6 +677,7 @@ namespace PixelSort.Model
             }
 
             // returns the sorted image
+            toSort.SetResolution(72.0F, 72.0F);
             return toSort;
         }
 

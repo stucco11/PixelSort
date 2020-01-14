@@ -17,12 +17,6 @@
             <Setter Property="Width" Value="Auto" />
         </Style>
 
-        <Style TargetType="ComboBox">
-
-            <Setter Property="Background" Value="Yellow" />
-
-        </Style>
-
         <Style TargetType="CheckBox">
             <Setter Property="Foreground" Value="White" />
             <Setter Property="FontSize" Value="12" />
@@ -95,6 +89,7 @@
                         </BeginStoryboard>
                     </Trigger.ExitActions>
                 </Trigger>
+
             </Style.Triggers>
 
         </Style>
@@ -156,8 +151,7 @@
     </UserControl.Resources>
 
     <DockPanel>
-        <StackPanel DockPanel.Dock="Left"
-                    VerticalAlignment="Center">
+        <StackPanel VerticalAlignment="Center" DockPanel.Dock="Left">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
