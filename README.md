@@ -23,6 +23,7 @@ PixelSorting is something that I've been interested in for a while, but I haven'
 * Extending - this sorts the image as though it was a single line of pixels
 * Spiral Sort - this recursively sorts the enclosing perimeter of the image as though it was a singular line before stopping at the middle
 * Partitioning (*Vertical and Horizontal*) - this will partition the image by a number of user defined lines. This allows the program to sort each partition as though it were an individual image before stitching everything back together 
+* Direction - this allows the user to specify which direction the want the pixels in the image to be sorted in. The available options are right to left, left to right, top to bottom, and bottom to top
 
 ## Acknowledgments
 
