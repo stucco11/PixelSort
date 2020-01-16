@@ -120,12 +120,20 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
-    <Resource Include="link.jpg" />
+    <Resource Include="Images\right.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\left.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\down.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\up.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

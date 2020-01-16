@@ -16,6 +16,13 @@ using System.Windows.Navigation;
 
 namespace PixelSort.ViewModel
 {
+    public enum DirectionEnum
+    {
+        Right,
+        Down,
+        Left,
+        Up
+    }
     public enum AdditionalOptionsEnum
     {
         Extend,
@@ -38,32 +45,31 @@ namespace PixelSort.ViewModel
     }
     public class BasePageViewModel : BaseViewModel, IPageViewModel, INotifyPropertyChanged
     {
-        private Visibility _BrightnessOptionsVisibility = Visibility.Visible;
 
         // Stores a copy of _collectionEnum
         private ObservableCollection<string> _collectionEnum = null;
-
+        private string _DirectionText = "Left to Right";
+        private string _BoundText = "0.0 and 1.0";
+        private DirectionEnum _Direction = DirectionEnum.Right;
         private RGBEnum _ColorChecked = RGBEnum.Red;
         private AdditionalOptionsEnum _AddOps = AdditionalOptionsEnum.None;
         private bool _ExtendSort = false;
-        private string _ColorText = "Sort by: Red";
-        private string _AddOpsText = "Additional Options: None";
+        private string _ColorText = "Red";
+        private string _AddOpsText = "None";
         private ICommand _goToSettings;
         private Visibility _HorizontalPanelVisibility = Visibility.Collapsed;
         private Visibility _ExtendVisibility = Visibility.Visible;
         private int _HorizontalPartitions = 0;
         private string _imagePath = "";
-        private double _LowerBright = 0.0;
-        private string _PixelDimensions = "Dimensions: File not loaded";
+        private double _LowerBound = 0.0;
+        private string _PixelDimensions = "File not loaded";
         private Boolean _ProcessEnabled = false;
         private Visibility _RGBVisibility = Visibility.Collapsed;
-        private string _RotationText = "Angle of rotation: 0°";
-        private int _RotationValue = 0;
         private Boolean _SaveEnabled = false;
         private SortingMethodsEnum _SelectedSort = SortingMethodsEnum.Brightness;
         private string _SortedImage = "";
 
-        private double _UpperBright = 1.0;
+        private double _UpperBound = 1.0;
 
         private Visibility _VerticalPanelVisibility = Visibility.Visible;
 
@@ -80,6 +86,30 @@ namespace PixelSort.ViewModel
         // Event Handler for allows UI updates when called
         public event PropertyChangedEventHandler PropertyChanged;
 
+        public string DirectionText
+        {
+            get
+            {
+                return _DirectionText;
+            }
+            set
+            {
+                _DirectionText = value;
+                NotifyPropertyChanged();
+            }
+        }
+        public string BoundText
+        {
+            get
+            {
+                return _BoundText;
+            }
+            set
+            {
+                _BoundText = value;
+                NotifyPropertyChanged();
+            }
+        }
         public bool ExtendSort
         {
             get
@@ -89,6 +119,50 @@ namespace PixelSort.ViewModel
             set
             {
                 _ExtendSort = value;
+            }
+        }
+
+        public object RightChecked
+        {
+            get
+            {
+                return (new RelayCommand(x =>
+                {
+                    DirectionChecked = DirectionEnum.Right;
+                }));
+            }
+        }
+
+        public object UpChecked
+        {
+            get
+            {
+                return (new RelayCommand(x =>
+                {
+                    DirectionChecked = DirectionEnum.Up;
+                }));
+            }
+        }
+
+        public object LeftChecked
+        {
+            get
+            {
+                return (new RelayCommand(x =>
+                {
+                    DirectionChecked = DirectionEnum.Left;
+                }));
+            }
+        }
+
+        public object DownChecked
+        {
+            get
+            {
+                return (new RelayCommand(x =>
+                {
+                    DirectionChecked = DirectionEnum.Down;
+                }));
             }
         }
 
@@ -136,16 +210,6 @@ namespace PixelSort.ViewModel
             }
         }
 
-        public Visibility BrightnessOptions
-        {
-            get { return _BrightnessOptionsVisibility; }
-            set
-            {
-                _BrightnessOptionsVisibility = value;
-                NotifyPropertyChanged();
-            }
-        }
-
         public object EditSorted
         {
             get
@@ -186,6 +250,37 @@ namespace PixelSort.ViewModel
                 }
             }
         }
+
+        public DirectionEnum DirectionChecked
+        {
+            get
+            {
+                return _Direction;
+            }
+            set
+            {
+                _Direction = value;
+                switch (_Direction)
+                {
+                    case DirectionEnum.Right:
+                        DirectionText = "Left to Right";
+                        break;
+
+                    case DirectionEnum.Left:
+                        DirectionText = "Right to Left";
+                        break;
+
+                    case DirectionEnum.Up:
+                        DirectionText = "Bottom to Top";
+                        break;
+
+                    case DirectionEnum.Down:
+                        DirectionText = "To to Bottom";
+                        break;
+                }
+            }
+        }
+
         public AdditionalOptionsEnum AddOps
         {
             get
@@ -224,7 +319,7 @@ namespace PixelSort.ViewModel
             }
             set
             {
-                _AddOpsText = "Additional Options: " + value;
+                _AddOpsText = value;
                 NotifyPropertyChanged();
             }
         }
@@ -237,7 +332,7 @@ namespace PixelSort.ViewModel
             }
             set
             {
-                _ColorText = "Sort by: " + value;
+                _ColorText = value;
                 NotifyPropertyChanged();
             }
         }
@@ -325,15 +420,16 @@ namespace PixelSort.ViewModel
             }
         }
 
-        public double LowerBright
+        public double LowerBound
         {
             get
             {
-                return _LowerBright;
+                return _LowerBound;
             }
             set
             {
-                _LowerBright = value;
+                _LowerBound = value;
+                NotifyPropertyChanged();
             }
         }
 
@@ -345,7 +441,7 @@ namespace PixelSort.ViewModel
             }
             set
             {
-                _PixelDimensions = value == null ? "Dimensions: 0 x 0" : "Dimensions: " + value;
+                _PixelDimensions = value == null ? "0 x 0" : value;
                 NotifyPropertyChanged();
             }
         }
@@ -369,7 +465,7 @@ namespace PixelSort.ViewModel
             {
                 return (new RelayCommand(x =>
                 {
-                    image = sorts.Sort(ImagePath, SelectedSort, LowerBright, UpperBright, HorizontalPartitions, VerticalPartitions, RotationValue, ColorChecked, AddOps);
+                    image = sorts.Sort(ImagePath, SelectedSort, LowerBound, UpperBound, HorizontalPartitions, VerticalPartitions, ColorChecked, AddOps, DirectionChecked);
                     imageSaveTool.SaveImage(image);
                     SortedImage = imageSaveTool.SavedImagePath;
                     SaveEnabled = true;
@@ -394,33 +490,6 @@ namespace PixelSort.ViewModel
             set
             {
                 _RGBVisibility = value;
-                NotifyPropertyChanged();
-            }
-        }
-
-        public string RotationText
-        {
-            get
-            {
-                return _RotationText;
-            }
-            set
-            {
-                _RotationText = value;
-                NotifyPropertyChanged();
-            }
-        }
-
-        public int RotationValue
-        {
-            get
-            {
-                return _RotationValue;
-            }
-            set
-            {
-                _RotationValue = value;
-                RotationText = "Angle of rotation: " + RotationValue + "°";
                 NotifyPropertyChanged();
             }
         }
@@ -460,22 +529,30 @@ namespace PixelSort.ViewModel
                 _SelectedSort = value;
                 if (_SelectedSort == SortingMethodsEnum.Brightness)
                 {
-                    BrightnessOptions = Visibility.Visible;
+                    BoundText = "0.0 and 1.0";
+                    LowerBound = 0.0;
+                    UpperBound = 1.0;
                     RGBOptions = Visibility.Collapsed;
                 }
                 if (_SelectedSort == SortingMethodsEnum.Hue)
                 {
-                    BrightnessOptions = Visibility.Collapsed;
+                    BoundText = "0.0 and 360.0";
+                    LowerBound = 0.0;
+                    UpperBound = 360.0;
                     RGBOptions = Visibility.Collapsed;
                 }
                 if (_SelectedSort == SortingMethodsEnum.Saturation)
                 {
-                    BrightnessOptions = Visibility.Collapsed;
+                    BoundText = "0.0 and 1.0";
+                    LowerBound = 0.0;
+                    UpperBound = 1.0;
                     RGBOptions = Visibility.Collapsed;
                 }
                 if (_SelectedSort == SortingMethodsEnum.RGB)
                 {
-                    BrightnessOptions = Visibility.Collapsed;
+                    BoundText = "0.0 and 255.0";
+                    LowerBound = 0.0;
+                    UpperBound = 255.0;
                     RGBOptions = Visibility.Visible;
                 }
             }
@@ -512,15 +589,16 @@ namespace PixelSort.ViewModel
             }
         }
 
-        public double UpperBright
+        public double UpperBound
         {
             get
             {
-                return _UpperBright;
+                return _UpperBound;
             }
             set
             {
-                _UpperBright = value;
+                _UpperBound = value;
+                NotifyPropertyChanged();
             }
         }
 

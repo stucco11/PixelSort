@@ -162,7 +162,7 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsHighlighted" Value="true">
-                                <Setter TargetName="Border" Property="Background" Value="#373f51" />
+                                <Setter TargetName="Border" Property="Background" Value="#2d84b3" />
                             </Trigger>
                             <Trigger Property="IsHighlighted" Value="false">
                                 <Setter TargetName="Border" Property="Background" Value="#1b1b1e" />
@@ -226,13 +226,16 @@
                     <Setter Property="Background" Value="#2f2f32" />
                     <Setter Property="Foreground" Value="#b1b4b9" />
                 </Trigger>
+                <Trigger Property="Button.IsPressed" Value="True">
+                    <Setter Property="Background" Value="#48b0e8" />
+                </Trigger>
                 <Trigger Property="IsMouseOver" Value="True">
                     <Trigger.EnterActions>
                         <BeginStoryboard>
                             <Storyboard>
                                 <ColorAnimation
                                     Storyboard.TargetProperty="Background.Color"
-                                    To="#373f51"
+                                    To="#2d84b3"
                                     Duration="0:0:0.05" />
                             </Storyboard>
                         </BeginStoryboard>
@@ -438,12 +441,23 @@
                     Foreground="White"
                     Text="PixelSort" />
             </StackPanel>
-            <TextBlock
-                Margin="10"
-                HorizontalAlignment="Center"
-                FontSize="14"
-                Foreground="White"
-                Text="{Binding PixelDimensions}" />
+
+            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                <TextBlock
+                    Margin="5,5,0,5"
+                    FontSize="14"
+                    Text="Dimensions: "
+                    TextAlignment="Center"
+                    TextWrapping="Wrap" />
+                <TextBlock
+                    Margin="0,5,5,5"
+                    FontSize="14"
+                    FontWeight="Bold"
+                    Text="{Binding PixelDimensions}"
+                    TextAlignment="Center"
+                    TextWrapping="Wrap" />
+
+            </StackPanel>
 
             <ComboBox
                 Name="SortComboBox"
@@ -477,19 +491,30 @@
                 </Border>
             </StackPanel>
 
-            <StackPanel MaxWidth="300" Visibility="{Binding BrightnessOptions}">
+            <StackPanel MaxWidth="300">
                 <Border Margin="5">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition />
                             <RowDefinition />
                         </Grid.RowDefinitions>
-                        <TextBlock
+                        <StackPanel
                             Grid.Row="0"
-                            Width="200"
-                            Text="Please enter bounds between 0 and 1"
-                            TextAlignment="Center"
-                            TextWrapping="Wrap" />
+                            HorizontalAlignment="Center"
+                            Orientation="Horizontal">
+                            <TextBlock
+                                Margin="5,5,0,5"
+                                Text="Please Enter Bounds Between: "
+                                TextAlignment="Center"
+                                TextWrapping="Wrap" />
+                            <TextBlock
+                                Margin="0,5,5,5"
+                                FontWeight="Bold"
+                                Text="{Binding BoundText}"
+                                TextAlignment="Center"
+                                TextWrapping="Wrap" />
+
+                        </StackPanel>
                         <StackPanel
                             Grid.Row="1"
                             HorizontalAlignment="Center"
@@ -498,14 +523,14 @@
                             <StackPanel Orientation="Vertical">
 
                                 <TextBlock Text="Lower Bound" />
-                                <local:NumericTextBox Margin="10" Text="{Binding LowerBright, Mode=TwoWay}" />
+                                <local:NumericTextBox Margin="10" Text="{Binding LowerBound, Mode=TwoWay}" />
                             </StackPanel>
 
                             <StackPanel Orientation="Vertical">
 
                                 <TextBlock Text="Upper Bound" />
 
-                                <local:NumericTextBox Margin="10" Text="{Binding UpperBright, Mode=TwoWay}" />
+                                <local:NumericTextBox Margin="10" Text="{Binding UpperBound, Mode=TwoWay}" />
                             </StackPanel>
                         </StackPanel>
                     </Grid>
@@ -520,12 +545,23 @@
                             <RowDefinition />
                             <RowDefinition />
                         </Grid.RowDefinitions>
-                        <TextBlock
+                        <StackPanel
                             Grid.Row="0"
-                            Width="200"
-                            Text="{Binding ColorText}"
-                            TextAlignment="Center"
-                            TextWrapping="Wrap" />
+                            HorizontalAlignment="Center"
+                            Orientation="Horizontal">
+                            <TextBlock
+                                Margin="5,5,0,5"
+                                Text="Sort By: "
+                                TextAlignment="Center"
+                                TextWrapping="Wrap" />
+                            <TextBlock
+                                Margin="0,5,5,5"
+                                FontWeight="Bold"
+                                Text="{Binding ColorText}"
+                                TextAlignment="Center"
+                                TextWrapping="Wrap" />
+
+                        </StackPanel>
                         <StackPanel
                             Grid.Row="1"
                             HorizontalAlignment="Center"
@@ -534,20 +570,20 @@
                             <Button
                                 x:Name="Red"
                                 Width="80px"
-                                Margin="10px"
+                                Margin="5,10"
                                 Command="{Binding RedChecked}"
                                 Content="Red" />
                             <Button
                                 x:Name="Blue"
                                 Width="80px"
-                                Margin="10px"
+                                Margin="5,10"
                                 Command="{Binding BlueChecked}"
                                 Content="Blue" />
 
                             <Button
                                 x:Name="Green"
                                 Width="80px"
-                                Margin="10px"
+                                Margin="5,10"
                                 Command="{Binding GreenChecked}"
                                 Content="Green" />
                         </StackPanel>
@@ -583,12 +619,22 @@
                             <RowDefinition />
                             <RowDefinition />
                         </Grid.RowDefinitions>
-                        <TextBlock
+                        <StackPanel
                             Grid.Row="0"
-                            Width="200"
-                            Text="{Binding AddOpsText}"
-                            TextAlignment="Center"
-                            TextWrapping="Wrap" />
+                            HorizontalAlignment="Center"
+                            Orientation="Horizontal">
+                            <TextBlock
+                                Margin="5,5,0,5"
+                                Text="Additional Options: "
+                                TextAlignment="Center"
+                                TextWrapping="Wrap" />
+                            <TextBlock
+                                Margin="0,5,5,5"
+                                FontWeight="Bold"
+                                Text="{Binding AddOpsText}"
+                                TextAlignment="Center"
+                                TextWrapping="Wrap" />
+                        </StackPanel>
                         <StackPanel
                             Grid.Row="1"
                             HorizontalAlignment="Center"
@@ -597,33 +643,94 @@
                             <Button
                                 x:Name="Extend"
                                 Width="80px"
-                                Margin="10px"
+                                Margin="5,10"
                                 Command="{Binding ExtendChecked}"
                                 Content="Extend" />
                             <Button
                                 x:Name="Spiral"
                                 Width="80px"
-                                Margin="10px"
+                                Margin="5,10"
                                 Command="{Binding SpiralChecked}"
                                 Content="Spiral" />
                             <Button
                                 x:Name="None"
                                 Width="80px"
-                                Margin="10px"
+                                Margin="5,10"
                                 Command="{Binding NoneChecked}"
                                 Content="None" />
                         </StackPanel>
                     </Grid>
                 </Border>
-                <Button
-                    x:Name="Process"
-                    Width="120"
-                    Margin="10"
-                    VerticalAlignment="Bottom"
-                    Command="{Binding ProcessImage}"
-                    Content="Begin Processing"
-                    IsEnabled="{Binding ProcessEnabled}" />
+                <Grid Margin="5">
+                    <Border>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <StackPanel
+                                Grid.Row="0"
+                                HorizontalAlignment="Center"
+                                Orientation="Horizontal">
+                                <TextBlock
+                                    Margin="5,5,0,5"
+                                    Text="Sort Direction: "
+                                    TextAlignment="Center"
+                                    TextWrapping="Wrap" />
+                                <TextBlock
+                                    Margin="0,5,5,5"
+                                    FontWeight="Bold"
+                                    Text="{Binding DirectionText}"
+                                    TextAlignment="Center"
+                                    TextWrapping="Wrap" />
+                            </StackPanel>
+                            <StackPanel
+                                Grid.Row="1"
+                                HorizontalAlignment="Center"
+                                Orientation="Horizontal">
+
+                                <Button
+                                    Width="48"
+                                    Height="48"
+                                    Margin="5,10"
+                                    Command="{Binding RightChecked}">
+                                    <Image Source="/Images/right.png" />
+                                </Button>
+                                <Button
+                                    Width="48"
+                                    Height="48"
+                                    Margin="5,10"
+                                    Command="{Binding DownChecked}">
+                                    <Image Source="/Images/down.png" />
+                                </Button>
+                                <Button
+                                    Width="48"
+                                    Height="48"
+                                    Margin="5,10"
+                                    Command="{Binding LeftChecked}">
+                                    <Image Source="/Images/left.png" />
+                                </Button>
+                                <Button
+                                    Width="48"
+                                    Height="48"
+                                    Margin="5,10"
+                                    Command="{Binding UpChecked}">
+                                    <Image Source="/Images/up.png" />
+                                </Button>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </Grid>
+
             </StackPanel>
+            <Button
+                x:Name="Process"
+                Width="120"
+                Margin="10"
+                VerticalAlignment="Bottom"
+                Command="{Binding ProcessImage}"
+                Content="Begin Processing"
+                IsEnabled="{Binding ProcessEnabled}" />
         </StackPanel>
 
     </DockPanel>
