@@ -191,36 +191,42 @@ namespace PixelSort.Model
             {
                 int modx = image.Width % (1 + hP);
                 int mody = image.Height % (1 + vP);
+                image = RotateImageBack(image, directionChecked);
                 List<Bitmap> partitions = PartitionImage(image, hP, vP, modx, mody);
 
                 for (int i = 0; i < partitions.Count; ++i)
                 {
-                    {
+                    partitions[i] = RotateImage(partitions[i], directionChecked);
                         switch (selectedSort)
                         {
                             case SortingMethodsEnum.Brightness:
                                 partitions[i] = SortByBrightness(partitions[i], lower, upper, addOps, selectedSort);
-                                continue;
+                            partitions[i] = RotateImageBack(partitions[i], directionChecked);
+                            continue;
 
                             case SortingMethodsEnum.Hue:
                                 partitions[i] = SortByHue(partitions[i], addOps, selectedSort, lower, upper);
-                                continue;
+                            partitions[i] = RotateImageBack(partitions[i], directionChecked);
+                            continue;
 
                             case SortingMethodsEnum.Saturation:
                                 partitions[i] = SortBySaturation(partitions[i], addOps, selectedSort, lower, upper);
-                                continue;
+                            partitions[i] = RotateImageBack(partitions[i], directionChecked);
+                            continue;
 
                             case SortingMethodsEnum.RGB:
                                 partitions[i] = SortByRGB(partitions[i], colorChecked, addOps, selectedSort, lower, upper);
-                                continue;
+                            partitions[i] = RotateImageBack(partitions[i], directionChecked);
+                            continue;
 
                             default:
-                                continue;
+                            partitions[i] = RotateImageBack(partitions[i], directionChecked);
+                            continue;
                         }
-                    }
                 }
 
                 image = Recombine(partitions, hP + 1);
+                image = RotateImage(image, directionChecked);
             }
 
             // if Extending was selected, then put the image back together so it's no longer a single line of pixels

@@ -472,15 +472,20 @@
 
                 <Border Margin="5">
                     <Grid>
-                        <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="Please Enter Vertical and Horizontal Partitions" />
+                        <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Grid.Row="1">
 
-                            <StackPanel Orientation="Vertical">
+                            <StackPanel Orientation="Vertical" Margin="10">
 
                                 <TextBlock Text="Vertical Partitions" />
                                 <local:NumericTextBox Margin="10" Text="{Binding VerticalPartitions, Mode=TwoWay}" />
                             </StackPanel>
 
-                            <StackPanel Orientation="Vertical">
+                            <StackPanel Orientation="Vertical" Margin="10">
 
                                 <TextBlock Text="Horizontal Partitions" />
 
@@ -520,13 +525,13 @@
                             HorizontalAlignment="Center"
                             Orientation="Horizontal">
 
-                            <StackPanel Orientation="Vertical">
+                            <StackPanel Orientation="Vertical" Margin="10">
 
                                 <TextBlock Text="Lower Bound" />
                                 <local:NumericTextBox Margin="10" Text="{Binding LowerBound, Mode=TwoWay}" />
                             </StackPanel>
 
-                            <StackPanel Orientation="Vertical">
+                            <StackPanel Orientation="Vertical" Margin="10">
 
                                 <TextBlock Text="Upper Bound" />
 
