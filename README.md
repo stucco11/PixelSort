@@ -1,4 +1,4 @@
-![Build](https://img.shields.io/badge/Release%20Version-0.1.0--alpha-blue)
+![Build](https://img.shields.io/badge/Release%20Version-0.1.1--alpha-blue)
 
 # PixelSort
 
@@ -37,6 +37,8 @@ This image had the Brightness Sorting method applied, 3 horizontal partitions an
 ## How to Download
 
 You can find the most resent release [here](https://github.com/stucco11/PixelSort/releases/tag/0.1.0-alpha).
+
+**Please note that PixelSort is still in Alpha. It does run properly but is still being actively worked on.**
 
 ## Acknowledgments
 
