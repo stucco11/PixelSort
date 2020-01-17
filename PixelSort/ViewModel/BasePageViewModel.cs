@@ -275,7 +275,7 @@ namespace PixelSort.ViewModel
                         break;
 
                     case DirectionEnum.Down:
-                        DirectionText = "To to Bottom";
+                        DirectionText = "Top to Bottom";
                         break;
                 }
             }
