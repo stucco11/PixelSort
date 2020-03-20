@@ -9,13 +9,22 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Navigation;
 
 namespace PixelSort.ViewModel
 {
+    // Enum for the sorting modes
+    // Extend treats the image as one line
+    // Sprial will do the same as extend but put everything back in a spiral formation
+    public enum AdditionalOptionsEnum
+    {
+        Extend,
+        Spiral,
+        None
+    }
+
+    // The direction that the pixels are being sorted in
     public enum DirectionEnum
     {
         Right,
@@ -23,12 +32,8 @@ namespace PixelSort.ViewModel
         Left,
         Up
     }
-    public enum AdditionalOptionsEnum
-    {
-        Extend,
-        Spiral,
-        None
-    }
+
+    // What color is being sorted
     public enum RGBEnum
     {
         Red,
@@ -36,6 +41,7 @@ namespace PixelSort.ViewModel
         Blue
     }
 
+    // Which of the four pixel properties the image will be sorted by
     public enum SortingMethodsEnum
     {
         [Description("Brightness")] Brightness,
@@ -43,244 +49,71 @@ namespace PixelSort.ViewModel
         [Description("Saturation")] Saturation,
         [Description("RGB")] RGB
     }
+
     public class BasePageViewModel : BaseViewModel, IPageViewModel, INotifyPropertyChanged
     {
 
-        // Stores a copy of _collectionEnum
-        private ObservableCollection<string> _collectionEnum = null;
-        private string _DirectionText = "Left to Right";
-        private string _BoundText = "0.0 and 1.0";
-        private DirectionEnum _Direction = DirectionEnum.Right;
-        private RGBEnum _ColorChecked = RGBEnum.Red;
+        // Associated with Additional Options
         private AdditionalOptionsEnum _AddOps = AdditionalOptionsEnum.None;
-        private bool _ExtendSort = false;
-        private string _ColorText = "Red";
         private string _AddOpsText = "None";
-        private ICommand _goToSettings;
-        private Visibility _HorizontalPanelVisibility = Visibility.Collapsed;
-        private Visibility _ExtendVisibility = Visibility.Visible;
-        private int _HorizontalPartitions = 0;
-        private string _imagePath = "";
-        private double _LowerBound = 0.0;
-        private string _PixelDimensions = "File not loaded";
-        private Boolean _ProcessEnabled = false;
-        private Visibility _RGBVisibility = Visibility.Collapsed;
-        private Boolean _SaveEnabled = false;
-        private SortingMethodsEnum _SelectedSort = SortingMethodsEnum.Brightness;
-        private string _SortedImage = "";
 
+        // Text to dictate the bounds for things like brightness
+        private string _BoundText = "0.0 and 1.0";
+        private double _LowerBound = 0.0;
         private double _UpperBound = 1.0;
 
-        private Visibility _VerticalPanelVisibility = Visibility.Visible;
+        // Stores a copy of _collectionEnum
+        private ObservableCollection<string> _collectionEnum = null;
 
+        // Associated with the selected color to sort by
+        private RGBEnum _ColorChecked = RGBEnum.Red;
+        private string _ColorText = "Red";
+
+        // Associated with the selected sorting direction
+        private DirectionEnum _Direction = DirectionEnum.Right;
+        private string _DirectionText = "Left to Right";
+
+        // Hold the values for the number of partitions that are needed
+        private int _HorizontalPartitions = 0;
         private int _VerticalPartitions = 0;
 
+        // TODO: Visibility for the Horizontal panel orientation
+        private Visibility _HorizontalPanelVisibility = Visibility.Collapsed;
+
+        // Visibility for the Vertical panel orientation
+        private Visibility _VerticalPanelVisibility = Visibility.Visible;
+
+        // Visibility for the RGB options
+        private Visibility _RGBVisibility = Visibility.Collapsed;
+
+        // Associated variables for the image
+        private string _imagePath = "";
+        private string _PixelDimensions = "File not loaded";
+
+        // Enbabled/Disabled flags for processing and saving the image
+        private Boolean _ProcessEnabled = false;
+        private Boolean _SaveEnabled = false;
+
+        // Sort that has been selected for the image
+        private SortingMethodsEnum _SelectedSort = SortingMethodsEnum.Brightness;
+
+        // Filepath for the sorted image
+        private string _SortedImage = "";
+
+        // Stored bitmap of the image to be processed
         private Bitmap image;
 
+        // Instantiations for model classes
         private Model.Save imageSaveTool = new Model.Save();
-
         private Sorts sorts = new Sorts();
 
+        // TODO: Used for horizontal/vertical layouts, not implemented yet
         private int visible = 0;
 
         // Event Handler for allows UI updates when called
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string DirectionText
-        {
-            get
-            {
-                return _DirectionText;
-            }
-            set
-            {
-                _DirectionText = value;
-                NotifyPropertyChanged();
-            }
-        }
-        public string BoundText
-        {
-            get
-            {
-                return _BoundText;
-            }
-            set
-            {
-                _BoundText = value;
-                NotifyPropertyChanged();
-            }
-        }
-        public bool ExtendSort
-        {
-            get
-            {
-                return _ExtendSort;
-            }
-            set
-            {
-                _ExtendSort = value;
-            }
-        }
-
-        public object RightChecked
-        {
-            get
-            {
-                return (new RelayCommand(x =>
-                {
-                    DirectionChecked = DirectionEnum.Right;
-                }));
-            }
-        }
-
-        public object UpChecked
-        {
-            get
-            {
-                return (new RelayCommand(x =>
-                {
-                    DirectionChecked = DirectionEnum.Up;
-                }));
-            }
-        }
-
-        public object LeftChecked
-        {
-            get
-            {
-                return (new RelayCommand(x =>
-                {
-                    DirectionChecked = DirectionEnum.Left;
-                }));
-            }
-        }
-
-        public object DownChecked
-        {
-            get
-            {
-                return (new RelayCommand(x =>
-                {
-                    DirectionChecked = DirectionEnum.Down;
-                }));
-            }
-        }
-
-        public object BlueChecked
-        {
-            get
-            {
-                return (new RelayCommand(x =>
-                {
-                    ColorChecked = RGBEnum.Blue;
-                }));
-            }
-        }
-
-        public object NoneChecked
-        {
-            get
-            {
-                return (new RelayCommand(x =>
-                {
-                    AddOps = AdditionalOptionsEnum.None;
-                }));
-            }
-        }
-
-        public object ExtendChecked
-        {
-            get
-            {
-                return (new RelayCommand(x =>
-                {
-                    AddOps = AdditionalOptionsEnum.Extend;
-                }));
-            }
-        }
-
-        public object SpiralChecked
-        {
-            get
-            {
-                return (new RelayCommand(x =>
-                {
-                    AddOps = AdditionalOptionsEnum.Spiral;
-                }));
-            }
-        }
-
-        public object EditSorted
-        {
-            get
-            {
-                return (new RelayCommand(x =>
-                {
-                    ImagePath = SortedImage;
-                    SortedImage = ImagePath;
-                }));
-            }
-        }
-        public RGBEnum ColorChecked
-        {
-            get
-            {
-                return _ColorChecked;
-            }
-            set
-            {
-                _ColorChecked = value;
-                switch (_ColorChecked)
-                {
-                    case RGBEnum.Red:
-                        ColorText = "Red";
-                        break;
-
-                    case RGBEnum.Blue:
-                        ColorText = "Blue";
-                        break;
-
-                    case RGBEnum.Green:
-                        ColorText = "Green";
-                        break;
-
-                    default:
-                        ColorText = "Green";
-                        break;
-                }
-            }
-        }
-
-        public DirectionEnum DirectionChecked
-        {
-            get
-            {
-                return _Direction;
-            }
-            set
-            {
-                _Direction = value;
-                switch (_Direction)
-                {
-                    case DirectionEnum.Right:
-                        DirectionText = "Left to Right";
-                        break;
-
-                    case DirectionEnum.Left:
-                        DirectionText = "Right to Left";
-                        break;
-
-                    case DirectionEnum.Up:
-                        DirectionText = "Bottom to Top";
-                        break;
-
-                    case DirectionEnum.Down:
-                        DirectionText = "Top to Bottom";
-                        break;
-                }
-            }
-        }
-
+        // Property for AddOps, sets text values in the UI depending on the value of _AddOps
         public AdditionalOptionsEnum AddOps
         {
             get
@@ -311,6 +144,7 @@ namespace PixelSort.ViewModel
             }
         }
 
+        // Property for AddOpsText on the ViewModel, will update UI when changed
         public string AddOpsText
         {
             get
@@ -324,6 +158,64 @@ namespace PixelSort.ViewModel
             }
         }
 
+        // Command Property on the ViewModel, will trigger when button is pressed
+        public object BlueChecked
+        {
+            get
+            {
+                return (new RelayCommand(x =>
+                {
+                    ColorChecked = RGBEnum.Blue;
+                }));
+            }
+        }
+
+        // Property for the BoundText on the UI
+        public string BoundText
+        {
+            get
+            {
+                return _BoundText;
+            }
+            set
+            {
+                _BoundText = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        // Property for the checked color, will update ColorText depending on _ColorChecked
+        public RGBEnum ColorChecked
+        {
+            get
+            {
+                return _ColorChecked;
+            }
+            set
+            {
+                _ColorChecked = value;
+                switch (_ColorChecked)
+                {
+                    case RGBEnum.Red:
+                        ColorText = "Red";
+                        break;
+
+                    case RGBEnum.Blue:
+                        ColorText = "Blue";
+                        break;
+
+                    case RGBEnum.Green:
+                        ColorText = "Green";
+                        break;
+
+                    default:
+                        ColorText = "Green";
+                        break;
+                }
+            }
+        }
+
+        // Updates the ColorText Property on the ViewModel when changed
         public string ColorText
         {
             get
@@ -336,17 +228,89 @@ namespace PixelSort.ViewModel
                 NotifyPropertyChanged();
             }
         }
-        public ICommand GoToSettings
+
+        // Changes the value of _Direction and DirectionText when DirectionChecked is changed in the UI
+        public DirectionEnum DirectionChecked
         {
             get
             {
-                return _goToSettings ?? (_goToSettings = new RelayCommand(x =>
+                return _Direction;
+            }
+            set
+            {
+                _Direction = value;
+                switch (_Direction)
                 {
-                    Mediator.Notify("GoToSettings", "");
+                    case DirectionEnum.Right:
+                        DirectionText = "Left to Right";
+                        break;
+
+                    case DirectionEnum.Left:
+                        DirectionText = "Right to Left";
+                        break;
+
+                    case DirectionEnum.Up:
+                        DirectionText = "Bottom to Top";
+                        break;
+
+                    case DirectionEnum.Down:
+                        DirectionText = "Top to Bottom";
+                        break;
+                }
+            }
+        }
+
+        // Updates the UI to set text of value
+        public string DirectionText
+        {
+            get
+            {
+                return _DirectionText;
+            }
+            set
+            {
+                _DirectionText = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        // Updates DirectionChecked when the Down Button is pressed
+        public object DownChecked
+        {
+            get
+            {
+                return (new RelayCommand(x =>
+                {
+                    DirectionChecked = DirectionEnum.Down;
                 }));
             }
         }
 
+        // When pressed, swaps the filepath of the image that the user wants sorted to the temp location of the sorted image
+        public object EditSorted
+        {
+            get
+            {
+                return (new RelayCommand(x =>
+                {
+                    ImagePath = SortedImage;
+                }));
+            }
+        }
+
+        // When Extend is checked, sets AddOps to Extend
+        public object ExtendChecked
+        {
+            get
+            {
+                return (new RelayCommand(x =>
+                {
+                    AddOps = AdditionalOptionsEnum.Extend;
+                }));
+            }
+        }
+
+        // When green is checked, ColorChecked is updated to Green
         public object GreenChecked
         {
             get
@@ -358,6 +322,7 @@ namespace PixelSort.ViewModel
             }
         }
 
+        // TODO: Used to for the image panel orientation
         public Visibility HorizontalPanelVisibility
         {
             get { return _HorizontalPanelVisibility; }
@@ -368,19 +333,7 @@ namespace PixelSort.ViewModel
             }
         }
 
-        public Visibility ExtendVisibility
-        {
-            get
-            {
-                return _ExtendVisibility;
-            }
-            set
-            {
-                _ExtendVisibility = value;
-                NotifyPropertyChanged();
-            }
-        }
-
+        // Property for the HorizontalPartitions in the UI
         public int HorizontalPartitions
         {
             get
@@ -393,6 +346,7 @@ namespace PixelSort.ViewModel
             }
         }
 
+        // When the user selects a new image, the _imagepath is updated and SortedImage is erased
         public string ImagePath
         {
             get { return _imagePath; }
@@ -404,6 +358,19 @@ namespace PixelSort.ViewModel
             }
         }
 
+        // When left is checked, the DirectionChecked is updated to Left
+        public object LeftChecked
+        {
+            get
+            {
+                return (new RelayCommand(x =>
+                {
+                    DirectionChecked = DirectionEnum.Left;
+                }));
+            }
+        }
+
+        // When the user loads a new image, the save button is disabled, the image process button is enabled, and PixelDimensions is updated
         public ICommand LoadImageClick
         {
             get
@@ -420,6 +387,7 @@ namespace PixelSort.ViewModel
             }
         }
 
+        // Property for the LowerBound in the UI
         public double LowerBound
         {
             get
@@ -433,6 +401,19 @@ namespace PixelSort.ViewModel
             }
         }
 
+        // If Extend or Spiral aren't checked, AddOps is none
+        public object NoneChecked
+        {
+            get
+            {
+                return (new RelayCommand(x =>
+                {
+                    AddOps = AdditionalOptionsEnum.None;
+                }));
+            }
+        }
+
+        // Property for the dimensions of the loaded image
         public string PixelDimensions
         {
             get
@@ -446,6 +427,7 @@ namespace PixelSort.ViewModel
             }
         }
 
+        // Property for the Button to process the loaded image
         public Boolean ProcessEnabled
         {
             get
@@ -459,6 +441,8 @@ namespace PixelSort.ViewModel
             }
         }
 
+        // Command for the Process Image Button. Sorts the image based on the selected options, 
+        // saves it to a temp location, sets the sorted image to the temp image, and enables the save button
         public ICommand ProcessImage
         {
             get
@@ -474,6 +458,7 @@ namespace PixelSort.ViewModel
             }
         }
 
+        // When Red is cheked, ColorChecked is updated
         public ICommand RedChecked
         {
             get
@@ -484,6 +469,8 @@ namespace PixelSort.ViewModel
                 }));
             }
         }
+
+        // Visibility Property for the RGBOptions in the UI
         public Visibility RGBOptions
         {
             get { return _RGBVisibility; }
@@ -494,6 +481,19 @@ namespace PixelSort.ViewModel
             }
         }
 
+        // When right is checked, DirectionChecked is updated to Right
+        public object RightChecked
+        {
+            get
+            {
+                return (new RelayCommand(x =>
+                {
+                    DirectionChecked = DirectionEnum.Right;
+                }));
+            }
+        }
+
+        // When the Save Button needs to change states, this is called and sets the button on the UI to the passed in value
         public Boolean SaveEnabled
         {
             get
@@ -507,6 +507,7 @@ namespace PixelSort.ViewModel
             }
         }
 
+        // When the Save button is clicked, the SaveImageMethod is returned as a RelayCommand
         public ICommand SaveImage
         {
             get
@@ -518,6 +519,8 @@ namespace PixelSort.ViewModel
             }
         }
 
+        // When a sorting method is chosen, the specific properties that can be altered for the sorting 
+        // method are changed, and only the properties that apply to a specific method are presented
         public SortingMethodsEnum SelectedSort
         {
             get
@@ -557,6 +560,8 @@ namespace PixelSort.ViewModel
                 }
             }
         }
+
+        // Stores the path to the SortedImage in the temp folder
         public string SortedImage
         {
             get
@@ -570,6 +575,7 @@ namespace PixelSort.ViewModel
             }
         }
 
+        // List of the availble sorting methods
         public ObservableCollection<string> SortingMethods
         {
             get
@@ -578,6 +584,19 @@ namespace PixelSort.ViewModel
             }
         }
 
+        // When Spiral is checked, AddOps is updated to reflect it
+        public object SpiralChecked
+        {
+            get
+            {
+                return (new RelayCommand(x =>
+                {
+                    AddOps = AdditionalOptionsEnum.Spiral;
+                }));
+            }
+        }
+
+        // TODO: Used to switch the orientation between horizontal and vertical
         public ICommand SwitchOrientation
         {
             get
@@ -589,6 +608,19 @@ namespace PixelSort.ViewModel
             }
         }
 
+        // When Up is clicked, DirectionChecked is updated
+        public object UpChecked
+        {
+            get
+            {
+                return (new RelayCommand(x =>
+                {
+                    DirectionChecked = DirectionEnum.Up;
+                }));
+            }
+        }
+
+        // Property that access the UpperBound number on the UI
         public double UpperBound
         {
             get
@@ -602,6 +634,7 @@ namespace PixelSort.ViewModel
             }
         }
 
+        // TODO: Used to determine the visibility of the Vertical Orientation
         public Visibility VerticalPanelVisibility
         {
             get { return _VerticalPanelVisibility; }
@@ -612,6 +645,7 @@ namespace PixelSort.ViewModel
             }
         }
 
+        // Property that is conntected to the VerticalPartitions value on the UI
         public int VerticalPartitions
         {
             get
@@ -623,6 +657,14 @@ namespace PixelSort.ViewModel
                 _VerticalPartitions = value;
             }
         }
+
+        /*
+         * Method that is called when an image needs to be saved.
+         * Presents the user with a saveDialog and allows them to save their image as a .jpg, .png, or a .bmp.
+         * Assuming that the entered name of the image isn't blank, the image will be stored into a memoryStream.
+         * That memory stream is then converted to a byte array, which is then written to the proper location with
+         * FileStream. Both MemoryStream and FileStream are disposed after this occurs
+         */
         public void SaveImageMethod()
         {
             SaveFileDialog saveDialog = new SaveFileDialog
@@ -662,11 +704,15 @@ namespace PixelSort.ViewModel
             }
         }
 
+        // Allows the UI to update the specific element that is updated when called
         protected void NotifyPropertyChanged([CallerMemberName]string propertyName = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
+        // Used for the Drop Down List of options that can be used for the Sorting Methods.
+        // Each Enum is stored with a string label in a dictionary, whih is then returned as an
+        // ObservableCollection
         private ObservableCollection<string> GetEnumDescriptions()
         {
             // Creates a Dictionary set to an enum value and a string
@@ -684,6 +730,11 @@ namespace PixelSort.ViewModel
             // Returns _collectionEnum
             return _collectionEnum;
         }
+
+        /* 
+         * Presents the user with a file dialog that allows them to load images that are .jpg or .png files.
+         * If they have a valid selection, then ImagePath is the filepath of the image
+         */
         private bool LoadImage(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog
@@ -691,6 +742,8 @@ namespace PixelSort.ViewModel
                 Filter = "JPG/PNG Images (*.jpg, *.png)|*.jpg;*.png|All Files (*.*)|*.*",
                 InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures)
             };
+
+            // If the user doesn't have a selection, NULL is assigned
             Nullable<bool> result = openFileDialog.ShowDialog();
 
             if (result == true)
@@ -701,6 +754,7 @@ namespace PixelSort.ViewModel
             return false;
         }
 
+        // TODO: Used to switch the orientation of the image panels
         private object TestOrientation()
         {
             if (visible == 0)
