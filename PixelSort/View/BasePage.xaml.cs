@@ -27,6 +27,9 @@ namespace PixelSort.View
         }
     }
 
+    /*
+     * Standard TextBox, but the only text that is allows is numberic
+     */
     public class NumericTextBox : TextBox
     {
         private static readonly Regex regex = new Regex("^[0-9.]+$");
@@ -36,18 +39,6 @@ namespace PixelSort.View
             if (!regex.IsMatch(e.Text))
                 e.Handled = true;
             base.OnPreviewTextInput(e);
-        }
-    }
-    public class ComparisonConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            return value?.Equals(parameter);
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            return value?.Equals(true) == true ? parameter : Binding.DoNothing;
         }
     }
 }
