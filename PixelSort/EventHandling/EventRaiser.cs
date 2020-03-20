@@ -1,5 +1,6 @@
 ﻿using System;
 
+// Code for this Window Switcher found here - https://www.technical-recipes.com/2018/navigating-between-views-in-wpf-mvvm/
 public static class EventRaiser
 {
     public static void Raise(this EventHandler handler, object sender)

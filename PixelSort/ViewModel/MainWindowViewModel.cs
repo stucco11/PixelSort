@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
+// Code for this Window Switcher found here - https://www.technical-recipes.com/2018/navigating-between-views-in-wpf-mvvm/
 namespace PixelSort.ViewModel
 {
     public class MainWindowViewModel : BaseViewModel

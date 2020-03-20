@@ -1,6 +1,7 @@
 using System;
 using System.Windows.Input;
 
+// Code for this Window Switcher found here - https://www.technical-recipes.com/2018/navigating-between-views-in-wpf-mvvm/
 public class RelayCommand<T> : ICommand
 {
     private readonly Predicate<T> _canExecute;
