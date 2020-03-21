@@ -241,6 +241,13 @@ namespace PixelSort.Model
             return image;
         }
 
+        /// <summary>
+        /// Rotates the image in 90 degree increments, the incrementation is determined by 
+        /// the DirectionEnum variable that is passed in
+        /// </summary>
+        /// <param name="image">The image that is to be rotated</param>
+        /// <param name="directionChecked">The enum that represents the selected rotation done by the user</param>
+        /// <returns></returns>
         private Bitmap RotateImage(Bitmap image, DirectionEnum directionChecked)
         {
             switch (directionChecked)
@@ -262,6 +269,14 @@ namespace PixelSort.Model
             }
         }
 
+        /// <summary>
+        /// Used to undo the work by RotateImage. Continues rotating the rotated image
+        /// to complete a full rotation of 360 degrees based on the passed in
+        /// DirectionEnum variable
+        /// </summary>
+        /// <param name="image">The image that is to be rotated</param>
+        /// <param name="directionChecked">The enum that represents the selected rotation done by the user</param>
+        /// <returns></returns>
         private Bitmap RotateImageBack(Bitmap image, DirectionEnum directionChecked)
         {
             switch (directionChecked)
@@ -621,6 +636,13 @@ namespace PixelSort.Model
             return toSort;
         }
 
+        /// <summary>
+        /// Sorts the passed in list by saturation with respect to boundaries
+        /// </summary>
+        /// <param name="pixelList">List of pixels to be sorted</param>
+        /// <param name="lower">Lower boundary</param>
+        /// <param name="upper">Upper boundary</param>
+        /// <returns>Sorted list of pixels</returns>
         private List<Color> SaturationSortWithBounds(List<Color> pixelList, double lower, double upper)
         {
             if (upper < lower)
@@ -787,6 +809,13 @@ namespace PixelSort.Model
             return image;
         }
 
+        /// <summary>
+        /// Sorts the passed in list of pixels by hue, bounded by the passed in lower and upper variables
+        /// </summary>
+        /// <param name="pixelList">The list of pixels that is to be sorted by hue</param>
+        /// <param name="lower">Represents the numeric value of the lower bound, specified by the user</param>
+        /// <param name="upper">Represents the numeric value of the upper bound, specified by the user</param>
+        /// <returns>The sorted list of pixels</returns>
         private List<Color> HueSortWithBounds(List<Color> pixelList, double lower, double upper)
         {
             if (upper < lower)
@@ -928,6 +957,13 @@ namespace PixelSort.Model
             return pixelList;
         }
 
+        /// <summary>
+        /// Sorts the passed in list by RGB values with respect to boundaries
+        /// </summary>
+        /// <param name="pixelList">List of pixels to be sorted</param>
+        /// <param name="lower">Lower boundary</param>
+        /// <param name="upper">Upper boundary</param>
+        /// <returns>Sorted list of pixels</returns>
         private List<Color> RGBSortWithBounds(List<Color> pixelList, double lower, double upper, RGBEnum sortBy)
         {
             if (upper < lower)
