@@ -158,14 +158,38 @@ namespace PixelSort.ViewModel
             }
         }
 
-        // Command Property on the ViewModel, will trigger when button is pressed
-        public object BlueChecked
+        // When Extend is checked, sets AddOps to Extend
+        public object ExtendChecked
         {
             get
             {
                 return (new RelayCommand(x =>
                 {
-                    ColorChecked = RGBEnum.Blue;
+                    AddOps = AdditionalOptionsEnum.Extend;
+                }));
+            }
+        }
+
+        // When Spiral is checked, AddOps is updated to reflect it
+        public object SpiralChecked
+        {
+            get
+            {
+                return (new RelayCommand(x =>
+                {
+                    AddOps = AdditionalOptionsEnum.Spiral;
+                }));
+            }
+        }
+
+        // If Extend or Spiral aren't checked, AddOps is none
+        public object NoneChecked
+        {
+            get
+            {
+                return (new RelayCommand(x =>
+                {
+                    AddOps = AdditionalOptionsEnum.None;
                 }));
             }
         }
@@ -180,6 +204,34 @@ namespace PixelSort.ViewModel
             set
             {
                 _BoundText = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        // Property that access the UpperBound number on the UI
+        public double UpperBound
+        {
+            get
+            {
+                return _UpperBound;
+            }
+            set
+            {
+                _UpperBound = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        // Property for the LowerBound in the UI
+        public double LowerBound
+        {
+            get
+            {
+                return _LowerBound;
+            }
+            set
+            {
+                _LowerBound = value;
                 NotifyPropertyChanged();
             }
         }
@@ -229,6 +281,42 @@ namespace PixelSort.ViewModel
             }
         }
 
+        // When Red is cheked, ColorChecked is updated
+        public object RedChecked
+        {
+            get
+            {
+                return (new RelayCommand(x =>
+                {
+                    ColorChecked = RGBEnum.Red;
+                }));
+            }
+        }
+
+        // Command Property on the ViewModel, will trigger when button is pressed
+        public object BlueChecked
+        {
+            get
+            {
+                return (new RelayCommand(x =>
+                {
+                    ColorChecked = RGBEnum.Blue;
+                }));
+            }
+        }
+
+        // When green is checked, ColorChecked is updated to Green
+        public object GreenChecked
+        {
+            get
+            {
+                return (new RelayCommand(x =>
+                {
+                    ColorChecked = RGBEnum.Green;
+                }));
+            }
+        }
+
         // Changes the value of _Direction and DirectionText when DirectionChecked is changed in the UI
         public DirectionEnum DirectionChecked
         {
@@ -274,6 +362,42 @@ namespace PixelSort.ViewModel
             }
         }
 
+        // When right is checked, DirectionChecked is updated to Right
+        public object RightChecked
+        {
+            get
+            {
+                return (new RelayCommand(x =>
+                {
+                    DirectionChecked = DirectionEnum.Right;
+                }));
+            }
+        }
+
+        // When left is checked, the DirectionChecked is updated to Left
+        public object LeftChecked
+        {
+            get
+            {
+                return (new RelayCommand(x =>
+                {
+                    DirectionChecked = DirectionEnum.Left;
+                }));
+            }
+        }
+
+        // When Up is clicked, DirectionChecked is updated
+        public object UpChecked
+        {
+            get
+            {
+                return (new RelayCommand(x =>
+                {
+                    DirectionChecked = DirectionEnum.Up;
+                }));
+            }
+        }
+
         // Updates DirectionChecked when the Down Button is pressed
         public object DownChecked
         {
@@ -283,53 +407,6 @@ namespace PixelSort.ViewModel
                 {
                     DirectionChecked = DirectionEnum.Down;
                 }));
-            }
-        }
-
-        // When pressed, swaps the filepath of the image that the user wants sorted to the temp location of the sorted image
-        public object EditSorted
-        {
-            get
-            {
-                return (new RelayCommand(x =>
-                {
-                    ImagePath = SortedImage;
-                }));
-            }
-        }
-
-        // When Extend is checked, sets AddOps to Extend
-        public object ExtendChecked
-        {
-            get
-            {
-                return (new RelayCommand(x =>
-                {
-                    AddOps = AdditionalOptionsEnum.Extend;
-                }));
-            }
-        }
-
-        // When green is checked, ColorChecked is updated to Green
-        public object GreenChecked
-        {
-            get
-            {
-                return (new RelayCommand(x =>
-                {
-                    ColorChecked = RGBEnum.Green;
-                }));
-            }
-        }
-
-        // TODO: Used to for the image panel orientation
-        public Visibility HorizontalPanelVisibility
-        {
-            get { return _HorizontalPanelVisibility; }
-            set
-            {
-                _HorizontalPanelVisibility = value;
-                NotifyPropertyChanged();
             }
         }
 
@@ -346,6 +423,19 @@ namespace PixelSort.ViewModel
             }
         }
 
+        // Property that is conntected to the VerticalPartitions value on the UI
+        public int VerticalPartitions
+        {
+            get
+            {
+                return _VerticalPartitions;
+            }
+            set
+            {
+                _VerticalPartitions = value;
+            }
+        }
+
         // When the user selects a new image, the _imagepath is updated and SortedImage is erased
         public string ImagePath
         {
@@ -355,18 +445,6 @@ namespace PixelSort.ViewModel
                 _imagePath = value;
                 SortedImage = "";
                 NotifyPropertyChanged();
-            }
-        }
-
-        // When left is checked, the DirectionChecked is updated to Left
-        public object LeftChecked
-        {
-            get
-            {
-                return (new RelayCommand(x =>
-                {
-                    DirectionChecked = DirectionEnum.Left;
-                }));
             }
         }
 
@@ -387,32 +465,6 @@ namespace PixelSort.ViewModel
             }
         }
 
-        // Property for the LowerBound in the UI
-        public double LowerBound
-        {
-            get
-            {
-                return _LowerBound;
-            }
-            set
-            {
-                _LowerBound = value;
-                NotifyPropertyChanged();
-            }
-        }
-
-        // If Extend or Spiral aren't checked, AddOps is none
-        public object NoneChecked
-        {
-            get
-            {
-                return (new RelayCommand(x =>
-                {
-                    AddOps = AdditionalOptionsEnum.None;
-                }));
-            }
-        }
-
         // Property for the dimensions of the loaded image
         public string PixelDimensions
         {
@@ -427,95 +479,12 @@ namespace PixelSort.ViewModel
             }
         }
 
-        // Property for the Button to process the loaded image
-        public Boolean ProcessEnabled
+        // List of the availble sorting methods
+        public ObservableCollection<string> SortingMethods
         {
             get
             {
-                return _ProcessEnabled;
-            }
-            set
-            {
-                _ProcessEnabled = value;
-                NotifyPropertyChanged();
-            }
-        }
-
-        // Command for the Process Image Button. Sorts the image based on the selected options, 
-        // saves it to a temp location, sets the sorted image to the temp image, and enables the save button
-        public ICommand ProcessImage
-        {
-            get
-            {
-                return (new RelayCommand(x =>
-                {
-                    image = sorts.Sort(ImagePath, SelectedSort, LowerBound, UpperBound, HorizontalPartitions, VerticalPartitions, ColorChecked, AddOps, DirectionChecked);
-                    imageSaveTool.SaveImage(image);
-                    SortedImage = imageSaveTool.SavedImagePath;
-                    SaveEnabled = true;
-                    NotifyPropertyChanged();
-                }));
-            }
-        }
-
-        // When Red is cheked, ColorChecked is updated
-        public ICommand RedChecked
-        {
-            get
-            {
-                return (new RelayCommand(x =>
-                {
-                    ColorChecked = RGBEnum.Red;
-                }));
-            }
-        }
-
-        // Visibility Property for the RGBOptions in the UI
-        public Visibility RGBOptions
-        {
-            get { return _RGBVisibility; }
-            set
-            {
-                _RGBVisibility = value;
-                NotifyPropertyChanged();
-            }
-        }
-
-        // When right is checked, DirectionChecked is updated to Right
-        public object RightChecked
-        {
-            get
-            {
-                return (new RelayCommand(x =>
-                {
-                    DirectionChecked = DirectionEnum.Right;
-                }));
-            }
-        }
-
-        // When the Save Button needs to change states, this is called and sets the button on the UI to the passed in value
-        public Boolean SaveEnabled
-        {
-            get
-            {
-                return _SaveEnabled;
-            }
-            set
-            {
-                _SaveEnabled = value;
-                NotifyPropertyChanged();
-            }
-        }
-
-        // When the Save button is clicked, the SaveImageMethod is returned as a RelayCommand
-        public ICommand SaveImage
-        {
-            get
-            {
-                return (new RelayCommand(x =>
-                {
-                    SaveImageMethod();
-                }));
+                return GetEnumDescriptions();
             }
         }
 
@@ -561,6 +530,74 @@ namespace PixelSort.ViewModel
             }
         }
 
+        // Visibility Property for the RGBOptions in the UI
+        public Visibility RGBOptions
+        {
+            get { return _RGBVisibility; }
+            set
+            {
+                _RGBVisibility = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        // Property for the Button to process the loaded image
+        public Boolean ProcessEnabled
+        {
+            get
+            {
+                return _ProcessEnabled;
+            }
+            set
+            {
+                _ProcessEnabled = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        // Command for the Process Image Button. Sorts the image based on the selected options, 
+        // saves it to a temp location, sets the sorted image to the temp image, and enables the save button
+        public ICommand ProcessImage
+        {
+            get
+            {
+                return (new RelayCommand(x =>
+                {
+                    image = sorts.Sort(ImagePath, SelectedSort, LowerBound, UpperBound, HorizontalPartitions, VerticalPartitions, ColorChecked, AddOps, DirectionChecked);
+                    imageSaveTool.SaveImage(image);
+                    SortedImage = imageSaveTool.SavedImagePath;
+                    SaveEnabled = true;
+                    NotifyPropertyChanged();
+                }));
+            }
+        }
+
+        // When the Save Button needs to change states, this is called and sets the button on the UI to the passed in value
+        public Boolean SaveEnabled
+        {
+            get
+            {
+                return _SaveEnabled;
+            }
+            set
+            {
+                _SaveEnabled = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        // When the Save button is clicked, the SaveImageMethod is returned as a RelayCommand
+        public ICommand SaveImage
+        {
+            get
+            {
+                return (new RelayCommand(x =>
+                {
+                    SaveImageMethod();
+                }));
+            }
+        }
+
         // Stores the path to the SortedImage in the temp folder
         public string SortedImage
         {
@@ -575,23 +612,14 @@ namespace PixelSort.ViewModel
             }
         }
 
-        // List of the availble sorting methods
-        public ObservableCollection<string> SortingMethods
-        {
-            get
-            {
-                return GetEnumDescriptions();
-            }
-        }
-
-        // When Spiral is checked, AddOps is updated to reflect it
-        public object SpiralChecked
+        // When pressed, swaps the filepath of the image that the user wants sorted to the temp location of the sorted image
+        public object EditSorted
         {
             get
             {
                 return (new RelayCommand(x =>
                 {
-                    AddOps = AdditionalOptionsEnum.Spiral;
+                    ImagePath = SortedImage;
                 }));
             }
         }
@@ -608,28 +636,13 @@ namespace PixelSort.ViewModel
             }
         }
 
-        // When Up is clicked, DirectionChecked is updated
-        public object UpChecked
+        // TODO: Used to for the image panel orientation
+        public Visibility HorizontalPanelVisibility
         {
-            get
-            {
-                return (new RelayCommand(x =>
-                {
-                    DirectionChecked = DirectionEnum.Up;
-                }));
-            }
-        }
-
-        // Property that access the UpperBound number on the UI
-        public double UpperBound
-        {
-            get
-            {
-                return _UpperBound;
-            }
+            get { return _HorizontalPanelVisibility; }
             set
             {
-                _UpperBound = value;
+                _HorizontalPanelVisibility = value;
                 NotifyPropertyChanged();
             }
         }
@@ -642,19 +655,6 @@ namespace PixelSort.ViewModel
             {
                 _VerticalPanelVisibility = value;
                 NotifyPropertyChanged();
-            }
-        }
-
-        // Property that is conntected to the VerticalPartitions value on the UI
-        public int VerticalPartitions
-        {
-            get
-            {
-                return _VerticalPartitions;
-            }
-            set
-            {
-                _VerticalPartitions = value;
             }
         }
 
