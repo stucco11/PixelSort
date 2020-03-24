@@ -8,9 +8,7 @@
         Title="PixelSort"
         Icon="Icon.ico"
         Height="900" 
-        Width="1600"
-        MinHeight="900" MinWidth="1600"
-        WindowState="Maximized"
+        Width="1500"
         Background="#282829">
     <Grid>
       <ContentControl Content="{Binding CurrentPageViewModel}" />

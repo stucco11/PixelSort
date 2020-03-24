@@ -6,7 +6,7 @@
     xmlns:local="clr-namespace:PixelSort.View"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     d:DesignHeight="900"
-    d:DesignWidth="1600"
+    d:DesignWidth="1500"
     Background="#282829"
     mc:Ignorable="d">
     <UserControl.Resources>
@@ -313,7 +313,8 @@
     </UserControl.Resources>
 
     <DockPanel>
-        <StackPanel VerticalAlignment="Center" DockPanel.Dock="Left">
+        <StackPanel VerticalAlignment="Center" 
+                    DockPanel.Dock="Left">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
@@ -323,7 +324,7 @@
                 </Grid.RowDefinitions>
                 <StackPanel Grid.Row="0">
                     <Image
-                        Width="1100"
+                        Width="1000"
                         Height="350"
                         Margin="10"
                         VerticalAlignment="Top"
@@ -345,7 +346,7 @@
                 -->
                 <StackPanel Grid.Row="2">
                     <Image
-                        Width="1100"
+                        Width="1000"
                         Height="350"
                         Margin="10"
                         VerticalAlignment="Bottom"
@@ -442,7 +443,8 @@
                     Text="PixelSort" />
             </StackPanel>
 
-            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+            <StackPanel HorizontalAlignment="Center" 
+                        Orientation="Horizontal">
                 <TextBlock
                     Margin="5,5,0,5"
                     FontSize="14"
