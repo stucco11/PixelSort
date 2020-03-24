@@ -563,7 +563,15 @@ namespace PixelSort.ViewModel
             {
                 return (new RelayCommand(x =>
                 {
-                    image = sorts.Sort(ImagePath, SelectedSort, LowerBound, UpperBound, HorizontalPartitions, VerticalPartitions, ColorChecked, AddOps, DirectionChecked);
+                    image = sorts.Sort(ImagePath, 
+                        SelectedSort, 
+                        LowerBound, 
+                        UpperBound, 
+                        HorizontalPartitions, 
+                        VerticalPartitions, 
+                        ColorChecked, 
+                        AddOps, 
+                        DirectionChecked);
                     imageSaveTool.SaveImage(image);
                     SortedImage = imageSaveTool.SavedImagePath;
                     SaveEnabled = true;
